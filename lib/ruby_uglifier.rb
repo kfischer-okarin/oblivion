@@ -1,5 +1,8 @@
 require 'unparser'
 
+require_relative 'ruby_uglifier/base_processor'
+require_relative 'ruby_uglifier/protected_private_method_finder'
+require_relative 'ruby_uglifier/method_uglifier'
 require_relative 'ruby_uglifier/class_uglifier'
 require_relative 'ruby_uglifier/uglifier'
 

@@ -25,38 +25,91 @@ RSpec.describe RubyUglifier::Uglifier do
       }
     }
 
-    describe 'method names' do
-      subject(:method_names) { method_nodes.map { |m| m.children[0] } }
+    let(:method_names) { method_nodes.map { |m| m.children[0] } }
 
-      describe 'renames private or protected methods' do
-        let(:source) {
-          <<~RUBY
-            class SomeClass
-              def public_method; end
+    let(:method_bodies) {
+      method_nodes.map { |m|
+        body = m.children[2]
+        if body.nil?
+          []
+        elsif body.type == :begin
+          body.children
+        else
+          [body]
+        end
+      }
+    }
 
-              protected
-              def protected_method; end
+    describe 'renames private or protected methods' do
+      subject { method_names }
 
-              private
-              def private_method; end
+      let(:source) {
+        <<~RUBY
+          class SomeClass
+            def public_method; end
 
-              public
-              def second_public_method; end
+            protected
+            def protected_method; end
+
+            private
+            def private_method; end
+
+            public
+            def second_public_method; end
+          end
+        RUBY
+      }
+
+      let(:expected) {
+        [
+          eq_to(:public_method),
+          not_eq_to(:protected_method),
+          not_eq_to(:private_method),
+          eq_to(:second_public_method)
+        ]
+      }
+
+      it { is_expected.to match expected }
+    end
+
+    describe 'use renamed protected/private method names' do
+      subject { method_bodies }
+
+      let(:source) {
+        <<~RUBY
+          class SomeClass
+            def public_method
+              protected_method
+              self.protected_method
             end
-          RUBY
-        }
 
-        let(:expected) {
+            protected
+            def protected_method
+              private_method
+              self.private_method
+            end
+
+            private
+            def private_method; end
+          end
+        RUBY
+      }
+
+      let(:expected) {
+        [
           [
-            eq_to(:public_method),
-            not_eq_to(:protected_method),
-            not_eq_to(:private_method),
-            eq_to(:second_public_method)
-          ]
-        }
+            s(:send, nil, method_names[1]),
+            s(:send, s(:self), method_names[1])
+          ],
+          [
+            s(:send, nil, method_names[2]),
+            s(:send, s(:self), method_names[2])
+          ],
+          []
+        ]
+      }
 
-        it { is_expected.to match expected }
-      end
+      it { is_expected.to match expected }
     end
   end
 end

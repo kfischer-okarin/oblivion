@@ -5,7 +5,10 @@ module RubyUglifier
     include AST::Processor::Mixin
 
     def on_class(node)
-      node.updated(nil, ClassUglifier.new.process_all(node.children))
+      method_finder = ProtectedPrivateMethodFinder.new
+      method_finder.process_all(node.children)
+      method_uglifier = ClassUglifier.new(method_finder.result)
+      node.updated(nil, method_uglifier.process_all(node.children))
     end
   end
 end

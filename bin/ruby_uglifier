@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'ruby_uglifier'
+
+open(ARGV[0]) do |f|
+  puts RubyUglifier.uglify(f.read)
+end

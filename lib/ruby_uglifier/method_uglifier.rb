@@ -8,7 +8,7 @@ module RubyUglifier
       receiver, name = node.children
 
       new_children = [*node.children]
-      if [nil, s(:self)].include? receiver
+      if [nil, AST::Node.new(:self)].include? receiver
         new_children[1] = @method_names[name] || name
       elsif receiver.is_a?(AST::Node) && receiver.type == :send
         new_children[0] = process(receiver)
@@ -26,5 +26,6 @@ module RubyUglifier
 
     alias :on_lvasgn :on_assign
     alias :on_ivasgn :on_assign
+    alias :on_block :on_begin
   end
 end

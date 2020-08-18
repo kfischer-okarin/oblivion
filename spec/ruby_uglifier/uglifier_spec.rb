@@ -81,6 +81,9 @@ RSpec.describe RubyUglifier::Uglifier do
             def public_method
               protected_method
               self.protected_method
+
+              local_var = private_method
+              @ivar = private_method
             end
 
             protected
@@ -99,7 +102,9 @@ RSpec.describe RubyUglifier::Uglifier do
         [
           [
             s(:send, nil, method_names[1]),
-            s(:send, s(:self), method_names[1])
+            s(:send, s(:self), method_names[1]),
+            s(:lvasgn, :local_var, s(:send, nil, method_names[2])),
+            s(:ivasgn, :@ivar, s(:send, nil, method_names[2]))
           ],
           [
             s(:send, nil, method_names[2]),

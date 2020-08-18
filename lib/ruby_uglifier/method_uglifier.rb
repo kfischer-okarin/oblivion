@@ -24,6 +24,13 @@ module RubyUglifier
       node.updated(nil, new_children)
     end
 
+    def on_indexasgn(node)
+      right_side = node.children[2]
+      new_children = [*node.children]
+      new_children[2] = process(right_side)
+      node.updated(nil, new_children)
+    end
+
     alias :on_lvasgn :on_assign
     alias :on_ivasgn :on_assign
     alias :on_block :on_begin

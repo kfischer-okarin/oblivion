@@ -1,3 +1,4 @@
+require 'ast'
 require 'unparser'
 require 'ruby_uglifier'
 
@@ -18,3 +19,28 @@ RSpec.configure do |config|
 
   include AST::Sexp
 end
+
+module NodeExtensions
+  def self_and_descendants
+    Enumerator.new do |y|
+      y << self
+
+      children.each do |c|
+        next unless c.is_a? AST::Node
+        c.self_and_descendants.each do |cc|
+          y << cc
+        end
+      end
+    end
+  end
+
+  def include?(node)
+    self_and_descendants.include? node
+  end
+
+  def any?(&block)
+    self_and_descendants.any?(&block)
+  end
+end
+
+AST::Node.include NodeExtensions

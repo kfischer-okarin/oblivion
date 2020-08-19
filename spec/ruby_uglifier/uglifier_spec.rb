@@ -96,6 +96,18 @@ RSpec.describe RubyUglifier::Uglifier do
 
       include_examples 'expected class body'
     end
+
+    describe 'private initialize method is not changed' do
+      let(:class_body) {
+        <<~RUBY
+          private
+          def initialize; end
+        RUBY
+      }
+      let(:expected_body) { a_method_definition(:initialize) }
+
+      include_examples 'expected class body'
+    end
   end
 
   describe 'Usages of renamed methods' do

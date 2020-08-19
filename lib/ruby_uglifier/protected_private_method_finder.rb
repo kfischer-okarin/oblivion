@@ -8,7 +8,8 @@ module RubyUglifier
     end
 
     def on_def(node)
-      @result << node.children[0] unless @access_modifier == :public
+      method_name = node.children[0]
+      @result << method_name unless @access_modifier == :public || method_name == :initialize
 
       node
     end

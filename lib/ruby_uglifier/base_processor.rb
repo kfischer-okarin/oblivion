@@ -4,8 +4,11 @@ module RubyUglifier
   class BaseProcessor
     include AST::Processor::Mixin
 
-    def on_begin(node)
-      node.updated(nil, process_all(node.children))
+    def handler_missing(node)
+      new_children = node.children.map { |c|
+        c.is_a?(AST::Node) ? process(c) : c
+      }
+      node.updated(nil, new_children)
     end
   end
 end

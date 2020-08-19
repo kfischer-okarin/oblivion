@@ -198,5 +198,18 @@ RSpec.describe RubyUglifier::Uglifier do
 
       include_examples 'expected method body'
     end
+
+    context 'inside a complex expression' do
+      let(:method_body) {
+        <<~RUBY
+          result = (result | private_method)
+        RUBY
+      }
+      let(:expected_body) {
+        s(:lvasgn, :result, s(:begin, s(:send, s(:lvar, :result), :|, method_call_with_new_name)))
+      }
+
+      include_examples 'expected method body'
+    end
   end
 end

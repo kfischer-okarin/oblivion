@@ -5,34 +5,17 @@ module RubyUglifier
     end
 
     def on_send(node)
-      receiver, name = node.children
+      receiver, name, args = node.children
 
       new_children = [*node.children]
       if [nil, AST::Node.new(:self)].include? receiver
         new_children[1] = @method_names[name] || name
-      elsif receiver.is_a?(AST::Node) && receiver.type == :send
-        new_children[0] = process(receiver)
+      else
+        new_children[0] = process(receiver) if receiver.is_a? AST::Node
+        new_children[2] = process(args) if args.is_a? AST::Node
       end
 
       node.updated(nil, new_children)
     end
-
-    def on_assign(node)
-      right_side = node.children[1]
-      new_children = [*node.children]
-      new_children[1] = process(right_side)
-      node.updated(nil, new_children)
-    end
-
-    def on_indexasgn(node)
-      right_side = node.children[2]
-      new_children = [*node.children]
-      new_children[2] = process(right_side)
-      node.updated(nil, new_children)
-    end
-
-    alias :on_lvasgn :on_assign
-    alias :on_ivasgn :on_assign
-    alias :on_block :on_begin
   end
 end

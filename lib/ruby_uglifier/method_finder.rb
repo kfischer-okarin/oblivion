@@ -25,11 +25,12 @@ module RubyUglifier
       case called_method
       when :public, :protected, :private
         @access_modifier = called_method
-      when :attr_reader, :attr_writer, :attr_accessor
-        method_names = node.children[2..-1].map { |n| n.children[0] }
-        method_names.each do |method_name|
-          add_to_result method_name
-        end
+      # TODO: Uglify instance_variables
+      # when :attr_reader, :attr_writer, :attr_accessor
+      #   method_names = node.children[2..-1].map { |n| n.children[0] }
+      #   method_names.each do |method_name|
+      #     add_to_result method_name
+      #   end
       end
       node
     end

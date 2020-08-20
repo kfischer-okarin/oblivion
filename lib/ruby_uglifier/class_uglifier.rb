@@ -20,20 +20,21 @@ module RubyUglifier
       node.updated(nil, new_children)
     end
 
-    def on_send(node)
-      method_name = node.children[1]
-      return unless %i[attr_reader attr_writer attr_accessor].include? method_name
+    # TODO: Uglify instance_variables
+    # def on_send(node)
+    #   method_name = node.children[1]
+    #   return unless %i[attr_reader attr_writer attr_accessor].include? method_name
 
-      new_children = [*node.children]
-      define_method_indices = 2..(node.children.size - 1)
+    #   new_children = [*node.children]
+    #   define_method_indices = 2..(node.children.size - 1)
 
-      define_method_indices.each do |i|
-        name_node = new_children[i] # s(:sym, method_name)
-        name = name_node.children[0]
-        new_children[i] = name_node.updated(nil, [@method_names[name]]) if @method_names.key? name
-      end
-      node.updated(nil, new_children)
-    end
+    #   define_method_indices.each do |i|
+    #     name_node = new_children[i] # s(:sym, method_name)
+    #     name = name_node.children[0]
+    #     new_children[i] = name_node.updated(nil, [@method_names[name]]) if @method_names.key? name
+    #   end
+    #   node.updated(nil, new_children)
+    # end
 
     alias :on_class :uglify_class
     alias :on_sclass :uglify_class

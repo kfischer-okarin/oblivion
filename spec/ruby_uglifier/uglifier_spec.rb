@@ -106,25 +106,26 @@ RSpec.describe RubyUglifier::Uglifier do
           include_examples 'expected class body'
         end
 
-        shared_examples 'method definer' do |method_definer|
-          describe '%s %s' % [access, method_definer] do
-            let(:class_body) {
-              <<~RUBY
-                #{access}
-                #{method_definer} :method, :method2
-              RUBY
-            }
-            let(:expected_body) {
-              a_node(:send, nil, method_definer, an_object_not_eq_to(s(:sym, :method)), an_object_not_eq_to(s(:sym, :method2)))
-            }
+        # TODO: Uglify instance_variables
+        # shared_examples 'method definer' do |method_definer|
+        #   describe '%s %s' % [access, method_definer] do
+        #     let(:class_body) {
+        #       <<~RUBY
+        #         #{access}
+        #         #{method_definer} :method, :method2
+        #       RUBY
+        #     }
+        #     let(:expected_body) {
+        #       a_node(:send, nil, method_definer, an_object_not_eq_to(s(:sym, :method)), an_object_not_eq_to(s(:sym, :method2)))
+        #     }
 
-            include_examples 'expected class body'
-          end
-        end
+        #     include_examples 'expected class body'
+        #   end
+        # end
 
-        include_examples 'method definer', :attr_reader
-        include_examples 'method definer', :attr_writer
-        include_examples 'method definer', :attr_accessor
+        # include_examples 'method definer', :attr_reader
+        # include_examples 'method definer', :attr_writer
+        # include_examples 'method definer', :attr_accessor
 
         describe '%s methods in inline classes' % access do
           let(:class_body) {

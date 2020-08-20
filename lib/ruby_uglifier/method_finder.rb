@@ -1,15 +1,17 @@
+require 'set'
+
 module RubyUglifier
-  class ProtectedPrivateMethodFinder < BaseProcessor
+  class MethodFinder < BaseProcessor
     attr_reader :result
 
     def initialize
       @access_modifier = :public
-      @result = []
+      @result = { public: Set.new, protected: Set.new, private: Set.new }
     end
 
     def on_def(node)
       method_name = node.children[0]
-      @result << method_name unless @access_modifier == :public || method_name == :initialize
+      @result[@access_modifier] << method_name
 
       node
     end

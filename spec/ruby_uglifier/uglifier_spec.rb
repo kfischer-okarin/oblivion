@@ -60,172 +60,163 @@ RSpec.describe RubyUglifier::Uglifier do
         include_examples 'expected class body'
       end
 
-      describe 'public methods after protected/private methods' do
-        let(:class_body) {
-          <<~RUBY
-            private
-            def private_method; end
-            public
-            def public_method; end
-          RUBY
-        }
-        let(:expected_body) { a_method_definition(:public_method) }
+      shared_examples 'with access' do |access|
+        describe 'public methods after %s methods' % access do
+          let(:class_body) {
+            <<~RUBY
+              #{access}
+              def method; end
+              public
+              def public_method; end
+            RUBY
+          }
+          let(:expected_body) { a_method_definition(:public_method) }
 
-        include_examples 'expected class body'
+          include_examples 'expected class body'
+        end
+
+        describe '%s initialize method' % access do |access|
+          let(:class_body) {
+            <<~RUBY
+              #{access}
+              def initialize; end
+            RUBY
+          }
+          let(:expected_body) { a_method_definition(:initialize) }
+
+          include_examples 'expected class body'
+        end
       end
 
-      describe 'protected initialize method' do
-        let(:class_body) {
-          <<~RUBY
-            protected
-            def initialize; end
-          RUBY
-        }
-        let(:expected_body) { a_method_definition(:initialize) }
-
-        include_examples 'expected class body'
-      end
-
-      describe 'private initialize method' do
-        let(:class_body) {
-          <<~RUBY
-            private
-            def initialize; end
-          RUBY
-        }
-        let(:expected_body) { a_method_definition(:initialize) }
-
-        include_examples 'expected class body'
-      end
+      include_examples 'with access', :protected
+      include_examples 'with access', :private
     end
 
     describe 'changed' do
-      describe 'protected methods' do
-        let(:class_body) {
-          <<~RUBY
-            protected
-            def protected_method; end
-          RUBY
-        }
-        let(:expected_body) { a_method_definition(an_object_not_eq_to(:protected_method)) }
+      shared_examples 'with access' do |access|
+        describe '%s methods' % access do
+          let(:class_body) {
+            <<~RUBY
+              #{access}
+              def method; end
+            RUBY
+          }
+          let(:expected_body) { a_method_definition(an_object_not_eq_to(:method)) }
 
-        include_examples 'expected class body'
-      end
-
-      describe 'private methods' do
-        let(:class_body) {
-          <<~RUBY
-            private
-            def private_method; end
-          RUBY
-        }
-        let(:expected_body) { a_method_definition(an_object_not_eq_to(:private_method)) }
-
-        include_examples 'expected class body'
-      end
-    end
-  end
-
-  describe 'Usages of renamed methods' do
-    let(:source) {
-      <<~RUBY
-        class SomeClass
-          def public_method
-            #{method_body}
-          end
-
-          private
-
-          def private_method; end
+          include_examples 'expected class body'
         end
-      RUBY
-    }
+      end
 
-    shared_examples 'expected method body' do
-      it { is_expected.to include(a_method_definition(:public_method).with_body(expected_body)) }
+      include_examples 'with access', :protected
+      include_examples 'with access', :private
     end
+  end
 
-    let(:new_method_name) {
-      private_method_definition = result.self_and_descendants.select { |n| n.type == :def }.last
-      private_method_definition.children[0]
-    }
-
-    let(:method_call_with_new_name) {
-      s(:send, nil, new_method_name)
-    }
-
-    context 'called without receiver' do
-      let(:method_body) { 'private_method' }
-      let(:expected_body) { method_call_with_new_name }
-
-      include_examples 'expected method body'
-    end
-
-    context 'called with self receiver' do
-      let(:method_body) { 'self.private_method' }
-      let(:expected_body) { s(:send, s(:self), new_method_name) }
-
-      include_examples 'expected method body'
-    end
-
-    context 'on the right hand of a local variable assignment' do
-      let(:method_body) { 'local_var = private_method' }
-      let(:expected_body) { s(:lvasgn, :local_var, method_call_with_new_name) }
-
-      include_examples 'expected method body'
-    end
-
-    context 'on the right hand of an instance variable assignment' do
-      let(:method_body) { '@ivar = private_method' }
-      let(:expected_body) { s(:ivasgn, :@ivar, method_call_with_new_name) }
-
-      include_examples 'expected method body'
-    end
-
-    context 'on the right hand of an assignment to an array/hash index' do
-      let(:method_body) { '@ivar[1] = private_method' }
-      let(:expected_body) { s(:indexasgn, s(:ivar, :@ivar), s(:int, 1), method_call_with_new_name) }
-
-      include_examples 'expected method body'
-    end
-
-    context 'as receiver of a method' do
-      let(:method_body) { 'private_method.method' }
-      let(:expected_body) { s(:send, method_call_with_new_name, :method) }
-
-      include_examples 'expected method body'
-    end
-
-    context 'inside a block' do
-      let(:method_body) {
+  shared_examples 'Usages of renamed methods' do |access|
+    describe 'Usages of renamed %s methods' % access do
+      let(:source) {
         <<~RUBY
-          (1..10).each do |i|
-            private_method
+          class SomeClass
+            def public_method
+              #{method_body}
+            end
+
+            #{access}
+
+            def method; end
           end
         RUBY
       }
-      let(:expected_body) {
-        s(:block,
-          s(:send, s(:begin, s(:irange, s(:int, 1), s(:int, 10))), :each),
-          s(:args, s(:procarg0, s(:arg, :i))),
-          method_call_with_new_name
-        )
+
+      shared_examples 'expected method body' do
+        it { is_expected.to include(a_method_definition(:public_method).with_body(expected_body)) }
+      end
+
+      let(:new_method_name) {
+        renamed_method = result.self_and_descendants.select { |n| n.type == :def }.last
+        renamed_method.children[0]
       }
 
-      include_examples 'expected method body'
-    end
-
-    context 'inside a complex expression' do
-      let(:method_body) {
-        <<~RUBY
-          result = (result | private_method)
-        RUBY
-      }
-      let(:expected_body) {
-        s(:lvasgn, :result, s(:begin, s(:send, s(:lvar, :result), :|, method_call_with_new_name)))
+      let(:method_call_with_new_name) {
+        s(:send, nil, new_method_name)
       }
 
-      include_examples 'expected method body'
+      context 'called without receiver' do
+        let(:method_body) { 'method' }
+        let(:expected_body) { method_call_with_new_name }
+
+        include_examples 'expected method body'
+      end
+
+      context 'called with self receiver' do
+        let(:method_body) { 'self.method' }
+        let(:expected_body) { s(:send, s(:self), new_method_name) }
+
+        include_examples 'expected method body'
+      end
+
+      context 'on the right hand of a local variable assignment' do
+        let(:method_body) { 'local_var = method' }
+        let(:expected_body) { s(:lvasgn, :local_var, method_call_with_new_name) }
+
+        include_examples 'expected method body'
+      end
+
+      context 'on the right hand of an instance variable assignment' do
+        let(:method_body) { '@ivar = method' }
+        let(:expected_body) { s(:ivasgn, :@ivar, method_call_with_new_name) }
+
+        include_examples 'expected method body'
+      end
+
+      context 'on the right hand of an assignment to an array/hash index' do
+        let(:method_body) { '@ivar[1] = method' }
+        let(:expected_body) { s(:indexasgn, s(:ivar, :@ivar), s(:int, 1), method_call_with_new_name) }
+
+        include_examples 'expected method body'
+      end
+
+      context 'as receiver of a method' do
+        let(:method_body) { 'method.other_method' }
+        let(:expected_body) { s(:send, method_call_with_new_name, :other_method) }
+
+        include_examples 'expected method body'
+      end
+
+      context 'inside a block' do
+        let(:method_body) {
+          <<~RUBY
+            (1..10).each do |i|
+              method
+            end
+          RUBY
+        }
+        let(:expected_body) {
+          s(:block,
+            s(:send, s(:begin, s(:irange, s(:int, 1), s(:int, 10))), :each),
+            s(:args, s(:procarg0, s(:arg, :i))),
+            method_call_with_new_name
+          )
+        }
+
+        include_examples 'expected method body'
+      end
+
+      context 'inside a complex expression' do
+        let(:method_body) {
+          <<~RUBY
+            result = (result | method)
+          RUBY
+        }
+        let(:expected_body) {
+          s(:lvasgn, :result, s(:begin, s(:send, s(:lvar, :result), :|, method_call_with_new_name)))
+        }
+
+        include_examples 'expected method body'
+      end
     end
   end
+
+  include_examples 'Usages of renamed methods', :protected
+  include_examples 'Usages of renamed methods', :private
 end

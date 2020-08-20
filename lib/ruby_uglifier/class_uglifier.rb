@@ -36,6 +36,7 @@ module RubyUglifier
     end
 
     alias :on_class :uglify_class
+    alias :on_sclass :uglify_class
 
     private
 

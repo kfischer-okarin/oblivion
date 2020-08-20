@@ -35,6 +35,8 @@ module RubyUglifier
       node.updated(nil, new_children)
     end
 
+    alias :on_class :uglify_class
+
     private
 
     def random_method_name(original_name)

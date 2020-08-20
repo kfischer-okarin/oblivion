@@ -43,6 +43,22 @@ RSpec.describe RubyUglifier::Uglifier do
           include_examples 'expected class body'
         end
 
+        describe 'methods after inline classes with %s methods' % access do
+          let(:class_body) {
+            <<~RUBY
+              class Inline
+                #{access}
+                def method; end
+              end
+
+              def public_method; end
+            RUBY
+          }
+          let(:expected_body) { a_method_definition(:public_method) }
+
+          include_examples 'expected class body'
+        end
+
         describe '%s initialize method' % access do |access|
           let(:class_body) {
             <<~RUBY
@@ -93,6 +109,25 @@ RSpec.describe RubyUglifier::Uglifier do
         include_examples 'method definer', :attr_reader
         include_examples 'method definer', :attr_writer
         include_examples 'method definer', :attr_accessor
+
+        describe '%s methods in inline classes' % access do
+          let(:class_body) {
+            <<~RUBY
+              class Inline
+                #{access}
+                def method; end
+              end
+            RUBY
+          }
+
+          let(:expected_body) {
+            a_node(:class,
+                   s(:const, nil, :Inline), nil,
+                   including(a_method_definition(an_object_not_eq_to(:method))))
+          }
+
+          include_examples 'expected class body'
+        end
       end
 
       include_examples 'with access', :protected

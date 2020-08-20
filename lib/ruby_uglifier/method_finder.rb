@@ -16,6 +16,8 @@ module RubyUglifier
       node
     end
 
+    def on_class(node); end
+
     def on_send(node)
       called_method = node.children[1]
       case called_method

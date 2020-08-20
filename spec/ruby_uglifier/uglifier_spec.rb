@@ -48,65 +48,81 @@ RSpec.describe RubyUglifier::Uglifier do
       it { is_expected.to include(expected_body) }
     end
 
-    describe 'public method names are unchanged' do
-      let(:class_body) {
-        <<~RUBY
-          def public_method; end
-        RUBY
-      }
-      let(:expected_body) { a_method_definition(:public_method) }
+    describe 'unchanged' do
+      describe 'public methods' do
+        let(:class_body) {
+          <<~RUBY
+            def public_method; end
+          RUBY
+        }
+        let(:expected_body) { a_method_definition(:public_method) }
 
-      include_examples 'expected class body'
+        include_examples 'expected class body'
+      end
+
+      describe 'public methods after protected/private methods' do
+        let(:class_body) {
+          <<~RUBY
+            private
+            def private_method; end
+            public
+            def public_method; end
+          RUBY
+        }
+        let(:expected_body) { a_method_definition(:public_method) }
+
+        include_examples 'expected class body'
+      end
+
+      describe 'protected initialize method' do
+        let(:class_body) {
+          <<~RUBY
+            protected
+            def initialize; end
+          RUBY
+        }
+        let(:expected_body) { a_method_definition(:initialize) }
+
+        include_examples 'expected class body'
+      end
+
+      describe 'private initialize method' do
+        let(:class_body) {
+          <<~RUBY
+            private
+            def initialize; end
+          RUBY
+        }
+        let(:expected_body) { a_method_definition(:initialize) }
+
+        include_examples 'expected class body'
+      end
     end
 
-    describe 'public method names after protected/private methods are unchanged' do
-      let(:class_body) {
-        <<~RUBY
-          private
-          def private_method; end
-          public
-          def public_method; end
-        RUBY
-      }
-      let(:expected_body) { a_method_definition(:public_method) }
+    describe 'changed' do
+      describe 'protected methods' do
+        let(:class_body) {
+          <<~RUBY
+            protected
+            def protected_method; end
+          RUBY
+        }
+        let(:expected_body) { a_method_definition(an_object_not_eq_to(:protected_method)) }
 
-      include_examples 'expected class body'
-    end
+        include_examples 'expected class body'
+      end
 
-    describe 'protected method names are changed' do
-      let(:class_body) {
-        <<~RUBY
-          protected
-          def protected_method; end
-        RUBY
-      }
-      let(:expected_body) { a_method_definition(an_object_not_eq_to(:protected_method)) }
+      describe 'private methods' do
+        let(:class_body) {
+          <<~RUBY
+            private
+            def private_method; end
+          RUBY
+        }
+        let(:expected_body) { a_method_definition(an_object_not_eq_to(:private_method)) }
 
-      include_examples 'expected class body'
-    end
-
-    describe 'private method names are changed' do
-      let(:class_body) {
-        <<~RUBY
-          private
-          def private_method; end
-        RUBY
-      }
-      let(:expected_body) { a_method_definition(an_object_not_eq_to(:private_method)) }
-
-      include_examples 'expected class body'
-    end
-
-    describe 'private initialize method is not changed' do
-      let(:class_body) {
-        <<~RUBY
-          private
-          def initialize; end
-        RUBY
-      }
-      let(:expected_body) { a_method_definition(:initialize) }
-
-      include_examples 'expected class body'
+        include_examples 'expected class body'
+      end
     end
   end
 

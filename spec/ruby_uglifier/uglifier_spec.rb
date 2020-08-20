@@ -35,6 +35,19 @@ RSpec.describe RubyUglifier::Uglifier do
     AMethodDefinition.new(name)
   end
 
+  RSpec::Matchers.define :a_node do |type, *children|
+    match do |actual|
+      return false unless values_match?(type, actual.type)
+
+      children.each.with_index do |c, i|
+        return false unless values_match?(c, actual.children[i])
+      end
+
+      true
+    end
+  end
+
+
   describe 'Method names' do
     let(:source) {
       <<~RUBY
@@ -105,6 +118,26 @@ RSpec.describe RubyUglifier::Uglifier do
 
           include_examples 'expected class body'
         end
+
+        shared_examples 'method definer' do |method_definer|
+          describe '%s %s' % [access, method_definer] do
+            let(:class_body) {
+              <<~RUBY
+                #{access}
+                #{method_definer} :method, :method2
+              RUBY
+            }
+            let(:expected_body) {
+              a_node(:send, nil, method_definer, an_object_not_eq_to(s(:sym, :method)), an_object_not_eq_to(s(:sym, :method2)))
+            }
+
+            include_examples 'expected class body'
+          end
+        end
+
+        include_examples 'method definer', :attr_reader
+        include_examples 'method definer', :attr_writer
+        include_examples 'method definer', :attr_accessor
       end
 
       include_examples 'with access', :protected

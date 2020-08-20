@@ -11,17 +11,29 @@ module RubyUglifier
 
     def on_def(node)
       method_name = node.children[0]
-      @result[@access_modifier] << method_name
+      add_to_result method_name
 
       node
     end
 
     def on_send(node)
       called_method = node.children[1]
-      return unless %i[public protected private].include? called_method
-
-      @access_modifier = called_method
+      case called_method
+      when :public, :protected, :private
+        @access_modifier = called_method
+      when :attr_reader, :attr_writer, :attr_accessor
+        method_names = node.children[2..-1].map { |n| n.children[0] }
+        method_names.each do |method_name|
+          add_to_result method_name
+        end
+      end
       node
+    end
+
+    private
+
+    def add_to_result(method_name)
+      @result[@access_modifier] << method_name
     end
   end
 end

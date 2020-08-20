@@ -2,6 +2,8 @@ require 'ast'
 require 'unparser'
 require 'ruby_uglifier'
 
+require_relative 'support/matchers.rb'
+
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true

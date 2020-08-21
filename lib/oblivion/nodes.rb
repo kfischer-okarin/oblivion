@@ -29,6 +29,13 @@ module Oblivion
           end
         end
       end
+
+      def with_processed_children(processor)
+        new_children = children.map { |child|
+          child.is_a?(AST::Node) ? processor.process(child) : child
+        }
+        updated(nil, new_children)
+      end
     end
 
     class Def < Base
@@ -40,9 +47,8 @@ module Oblivion
     def parse(node)
       node_type = node.type
       class_name = Strings::Case.pascalcase(node_type.to_s)
-      return node unless own_constant_defined?(class_name)
 
-      node_class = Nodes.const_get(class_name)
+      node_class = own_constant_defined?(class_name) ? Nodes.const_get(class_name) : Base
       node_class.new(node_type, node.children, location: node.location)
     end
 

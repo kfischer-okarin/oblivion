@@ -2,30 +2,35 @@ require 'strings-case'
 
 module RubyUglifier
   module Nodes
-    class Def < Parser::AST::Node
-      def name
-        children[0]
-      end
+    class Base < Parser::AST::Node
+      class << self
+        def children(*attribute_names)
+          attribute_names.each.with_index do |name, i|
+            define_getter(name, i)
+            define_update_method(name, i)
+          end
+        end
 
-      def with_name(new_name)
-        new_children = [*children]
-        new_children[0] = new_name
-        updated(nil, new_children)
-      end
+        private
 
-      def args
-        children[1]
-      end
+        def define_getter(name, child_index)
+          define_method name do
+            children[child_index]
+          end
+        end
 
-      def body
-        children[2]
+        def define_update_method(name, child_index)
+          define_method :"with_#{name}" do |new_value|
+            new_children = [*children]
+            new_children[child_index] = new_value
+            updated(nil, new_children)
+          end
+        end
       end
+    end
 
-      def with_body(new_body)
-        new_children = [*children]
-        new_children[2] = new_body
-        updated(nil, new_children)
-      end
+    class Def < Base
+      children :name, :args, :body
     end
 
     module_function

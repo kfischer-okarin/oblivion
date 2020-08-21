@@ -10,6 +10,3 @@ jobs:
       - run: bundle install
       # - ruby/rubocop-check
       - ruby/rspec-test
-      - run:
-          name: Upload test result to CodeCov
-          command: bash <(curl -s https://codecov.io/bash)

@@ -7,6 +7,10 @@ Gem::Specification.new do |spec|
   spec.version       = Oblivion::VERSION
   spec.summary       = 'A Ruby code uglifier'
   spec.authors       = ['Kevin Fischer']
+  spec.description   = spec.description
+  spec.homepage      = 'https://github.com/kfischer-okarin/oblivion'
+  spec.license       = 'MIT'
+
 
   spec.required_ruby_version = '>= 2.0.0'
 

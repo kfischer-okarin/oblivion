@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require_relative 'lib/oblivion/version'
+
 Gem::Specification.new do |spec|
   spec.name          = 'oblivion'
-  spec.version       = '0.1.0'
+  spec.version       = Oblivion::VERSION
   spec.summary       = 'A Ruby code uglifier'
   spec.authors       = ['Kevin Fischer']
 

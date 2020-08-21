@@ -3,6 +3,7 @@ PATH
   specs:
     ruby_uglifier (0.1.0)
       parser (~> 2.7)
+      strings-case (~> 0.3.0)
       unparser (~> 0.4.7)
 
 GEM
@@ -70,6 +71,7 @@ GEM
       rspec-support (~> 3.9.0)
     rspec-support (3.9.3)
     shellany (0.0.1)
+    strings-case (0.3.0)
     thor (1.0.1)
     thread_safe (0.3.6)
     unparser (0.4.7)

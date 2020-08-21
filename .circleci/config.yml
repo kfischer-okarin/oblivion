@@ -7,7 +7,8 @@ jobs:
     executor: ruby/default
     steps:
       - checkout
-      - ruby/install-deps
+      - ruby/install-deps:
+          with-cache: false
       - ruby/rubocop-check
       - ruby/rspec-test
       - run:

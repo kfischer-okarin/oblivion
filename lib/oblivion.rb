@@ -12,7 +12,7 @@ module Oblivion
 
   def uglify(source_code)
     ast = Unparser.parse(source_code)
-    uglified_ast = Uglifier.new.process(ast)
+    uglified_ast = Uglifier.process(ast)
     Unparser.unparse(uglified_ast)
   end
 end

@@ -2,16 +2,24 @@ require 'set'
 
 module RubyUglifier
   class MethodFinder < BaseProcessor
-    attr_reader :result
+    def self.methods_of_class(class_node)
+      new.instance_eval {
+        process_all(class_node.children)
+        method_names
+      }
+    end
 
-    def initialize
-      @access_modifier = :public
-      @result = { public: Set.new, protected: Set.new, private: Set.new }
+    def method_names
+      @method_names ||= {
+        public: Set.new,
+        protected: Set.new,
+        private: Set.new
+      }
     end
 
     def on_def(node)
       method_name = node.children[0]
-      add_to_result method_name
+      add method_name
 
       node
     end
@@ -37,8 +45,12 @@ module RubyUglifier
 
     private
 
-    def add_to_result(method_name)
-      @result[@access_modifier] << method_name
+    def initialize
+      @access_modifier = :public
+    end
+
+    def add(method_name)
+      method_names[@access_modifier] << method_name
     end
   end
 end

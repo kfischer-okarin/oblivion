@@ -17,5 +17,11 @@ module RubyUglifier
       method_uglifier = ClassUglifier.new(methods_to_uglify)
       node.updated(nil, method_uglifier.process_all(node.children))
     end
+
+    def self.ignore_nodes(*types)
+      types.each do |type|
+        define_method :"on_#{type}" do |_|; end
+      end
+    end
   end
 end

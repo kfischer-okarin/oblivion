@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec::Matchers.define_negated_matcher :an_object_not_eq_to, :an_object_eq_to
 
 RSpec::Matchers.define :a_node do |type, *children|
@@ -23,7 +25,7 @@ module CustomMatchers
 
     def matches?(value)
       result = value.type == :def && values_match?(@name, value.children[0])
-      result = result && values_match?(@body_matcher, value.children[2]) if @body_matcher
+      result &&= values_match?(@body_matcher, value.children[2]) if @body_matcher
       result
     end
 
@@ -44,6 +46,6 @@ module CustomMatchers
   end
 end
 
-RSpec.configure do |config|
+RSpec.configure do |_config|
   include CustomMatchers
 end

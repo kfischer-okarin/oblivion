@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require 'securerandom'
 
 module Oblivion
   class ClassUglifier < BaseProcessor
     def initialize(methods)
+      super()
       @method_names = {}
       methods.each do |name|
         @method_names[name] = random_method_name(name)
@@ -14,9 +17,7 @@ module Oblivion
     def on_def(node)
       result = node
       result = result.with_name @method_names[node.name] if @method_names.key?(node.name)
-      result = result.with_body MethodUglifier.new(@method_names).process(node.body)
-
-      result
+      result.with_body MethodUglifier.new(@method_names).process(node.body)
     end
 
     # TODO: Uglify instance_variables
@@ -35,8 +36,8 @@ module Oblivion
     #   node.updated(nil, new_children)
     # end
 
-    alias :on_class :uglify_class
-    alias :on_sclass :uglify_class
+    alias on_class uglify_class
+    alias on_sclass uglify_class
 
     private
 

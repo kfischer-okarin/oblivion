@@ -1,0 +1,16 @@
+AllCops:
+  TargetRubyVersion: 2.4
+  NewCops: enable
+
+Style/BlockDelimiters:
+  EnforcedStyle: semantic
+
+Style/Documentation:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 120
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*

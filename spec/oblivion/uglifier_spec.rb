@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../spec_helper'
 
 RSpec.describe Oblivion::Uglifier do
@@ -122,7 +124,11 @@ RSpec.describe Oblivion::Uglifier do
       #       RUBY
       #     }
       #     let(:expected_body) {
-      #       a_node(:send, nil, method_definer, an_object_not_eq_to(s(:sym, :method)), an_object_not_eq_to(s(:sym, :method2)))
+      #       a_node(:send,
+      #              nil,
+      #              method_definer,
+      #              an_object_not_eq_to(s(:sym, :method)),
+      #              an_object_not_eq_to(s(:sym, :method2)))
       #     }
 
       #     include_examples 'expected class body'
@@ -145,8 +151,8 @@ RSpec.describe Oblivion::Uglifier do
 
         let(:expected_body) {
           a_node(:class,
-                  s(:const, nil, :Inline), nil,
-                  including(a_method_definition(an_object_not_eq_to(:method))))
+                 s(:const, nil, :Inline), nil,
+                 including(a_method_definition(an_object_not_eq_to(:method))))
         }
 
         include_examples 'expected class body'
@@ -164,7 +170,7 @@ RSpec.describe Oblivion::Uglifier do
 
         let(:expected_body) {
           a_node(:sclass, s(:self),
-                  including(a_method_definition(an_object_not_eq_to(:method))))
+                 including(a_method_definition(an_object_not_eq_to(:method))))
         }
 
         include_examples 'expected class body'
@@ -254,8 +260,7 @@ RSpec.describe Oblivion::Uglifier do
         s(:block,
           s(:send, s(:begin, s(:irange, s(:int, 1), s(:int, 10))), :each),
           s(:args, s(:procarg0, s(:arg, :i))),
-          method_call_with_new_name
-        )
+          method_call_with_new_name)
       }
 
       include_examples 'expected method body'

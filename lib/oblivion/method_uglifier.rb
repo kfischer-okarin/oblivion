@@ -1,13 +1,16 @@
+# frozen_string_literal: true
+
 module Oblivion
   class MethodUglifier < BaseProcessor
     def initialize(method_names)
+      super()
       @method_names = method_names
     end
 
     def on_send(node)
       receiver, name, args = node.children
 
-      new_children = [*node.children]
+      new_children = Array.new(node.children)
       if [nil, AST::Node.new(:self)].include? receiver
         new_children[1] = @method_names[name] || name
       else

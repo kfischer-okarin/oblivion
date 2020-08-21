@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'ast'
 require 'unparser'
 
-require_relative 'support/matchers.rb'
-require_relative 'support/coverage.rb'
-require_relative '../lib/oblivion.rb'
+require_relative 'support/matchers'
+require_relative 'support/coverage'
+require_relative '../lib/oblivion'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
@@ -30,6 +32,7 @@ module NodeExtensions
 
       children.each do |c|
         next unless c.is_a? AST::Node
+
         c.self_and_descendants.each do |cc|
           y << cc
         end

@@ -8,5 +8,5 @@ jobs:
     steps:
       - checkout
       - run: bundle install
-      # - ruby/rubocop-check
+      - ruby/rubocop-check
       - ruby/rspec-test

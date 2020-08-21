@@ -11,8 +11,8 @@ module Oblivion
     end
 
     def handler_missing(node)
-      new_children = node.children.map { |c|
-        c.is_a?(AST::Node) ? process(c) : c
+      new_children = node.children.map { |child|
+        child.is_a?(AST::Node) ? process(child) : child
       }
       node.updated(nil, new_children)
     end
@@ -25,8 +25,9 @@ module Oblivion
     end
 
     def self.ignore_nodes(*types)
+      do_nothing = ->(_node) {}
       types.each do |type|
-        define_method :"on_#{type}" do |_|; end
+        define_method :"on_#{type}", do_nothing
       end
     end
   end

@@ -20,9 +20,8 @@ module Oblivion
     end
 
     def on_def(node)
-      node.tap { |n|
-        add n.name
-      }
+      add node.name
+      node
     end
 
     ignore_nodes :class, :sclass

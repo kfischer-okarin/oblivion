@@ -38,11 +38,12 @@ module Oblivion
     module_function
 
     def parse(node)
-      class_name = Strings::Case.pascalcase(node.type.to_s)
+      node_type = node.type
+      class_name = Strings::Case.pascalcase(node_type.to_s)
       return node unless own_constant_defined?(class_name)
 
       node_class = Nodes.const_get(class_name)
-      node_class.new(node.type, node.children, location: node.location)
+      node_class.new(node_type, node.children, location: node.location)
     end
 
     def own_constant_defined?(name)

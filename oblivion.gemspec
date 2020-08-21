@@ -14,10 +14,16 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.0.0'
 
-  spec.add_dependency             'parser',       '~> 2.7'
-  spec.add_dependency             'unparser',     '~> 0.4.7'
-  spec.add_dependency             'strings-case', '~> 0.3.0'
+  spec.add_dependency             'parser',                '~> 2.7'
+  spec.add_dependency             'unparser',              '~> 0.4.7'
+  spec.add_dependency             'strings-case',          '~> 0.3.0'
 
-  spec.add_development_dependency 'rspec',        '~> 3.9'
-  spec.add_development_dependency 'guard-rspec',  '~> 4.7'
+  spec.add_development_dependency 'rspec',                 '~> 3.9'
+  spec.add_development_dependency 'guard-rspec',           '~> 4.7'
+  spec.add_development_dependency 'rspec_junit_formatter', '~> 0.4.1'
+  spec.add_development_dependency 'simplecov',             '~> 0.19.0'
+  spec.add_development_dependency 'codecov',               '~> 0.2.6'
+
+  spec.add_development_dependency 'rubocop',               '~> 0.89.1'
+  spec.add_development_dependency 'rubocop-rspec',         '~> 1.43'
 end

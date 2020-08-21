@@ -1,0 +1,12 @@
+version: 2.1
+orbs:
+  ruby: circleci/ruby@1.1.1
+
+jobs:
+  build:
+    executor: ruby/default
+    steps:
+      - checkout
+      - run: bundle install
+      # - ruby/rubocop-check
+      - ruby/rspec-test

@@ -2,6 +2,7 @@ require 'ast'
 require 'unparser'
 require 'oblivion'
 
+require_relative 'support/coverage.rb'
 require_relative 'support/matchers.rb'
 
 RSpec.configure do |config|

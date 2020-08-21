@@ -1,6 +1,6 @@
 require 'ast'
 require 'unparser'
-require 'ruby_uglifier'
+require 'oblivion'
 
 require_relative 'support/matchers.rb'
 

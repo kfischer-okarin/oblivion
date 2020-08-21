@@ -1,4 +1,4 @@
-module RubyUglifier
+module Oblivion
   class Uglifier < BaseProcessor
     def initialize
       @method_names_by_class = {}

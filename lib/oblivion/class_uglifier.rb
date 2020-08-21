@@ -1,6 +1,6 @@
 require 'securerandom'
 
-module RubyUglifier
+module Oblivion
   class ClassUglifier < BaseProcessor
     def initialize(methods)
       @method_names = {}

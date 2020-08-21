@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'oblivion'
+
+open(ARGV[0]) do |f|
+  puts Oblivion.uglify(f.read)
+end

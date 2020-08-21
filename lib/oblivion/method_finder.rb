@@ -1,6 +1,6 @@
 require 'set'
 
-module RubyUglifier
+module Oblivion
   class MethodFinder < BaseProcessor
     def self.methods_of_class(class_node)
       new.instance_eval {

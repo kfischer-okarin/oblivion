@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-RSpec.describe RubyUglifier::Uglifier do
+RSpec.describe Oblivion::Uglifier do
   subject(:result) { described_class.new.process(Unparser.parse(source)) }
 
   describe 'Method names' do

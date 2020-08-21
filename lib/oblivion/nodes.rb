@@ -1,6 +1,6 @@
 require 'strings-case'
 
-module RubyUglifier
+module Oblivion
   module Nodes
     class Base < Parser::AST::Node
       class << self

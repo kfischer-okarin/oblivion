@@ -1,11 +1,11 @@
 require 'ast'
 
-module RubyUglifier
+module Oblivion
   class BaseProcessor
     include AST::Processor::Mixin
 
     def process(node)
-      super(node ? RubyUglifier::Nodes.parse(node) : node)
+      super(node ? Nodes.parse(node) : node)
     end
 
     def handler_missing(node)

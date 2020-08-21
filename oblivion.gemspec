@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Gem::Specification.new do |spec|
-  spec.name          = 'ruby_uglifier'
+  spec.name          = 'oblivion'
   spec.version       = '0.1.0'
   spec.summary       = 'A Ruby code uglifier'
   spec.authors       = ['Kevin Fischer']

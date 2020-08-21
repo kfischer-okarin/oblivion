@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ruby_uglifier (0.1.0)
+    oblivion (0.1.0)
       parser (~> 2.7)
       strings-case (~> 0.3.0)
       unparser (~> 0.4.7)
@@ -88,8 +88,8 @@ PLATFORMS
 
 DEPENDENCIES
   guard-rspec (~> 4.7)
+  oblivion!
   rspec (~> 3.9)
-  ruby_uglifier!
 
 BUNDLED WITH
    2.1.2

@@ -1,9 +1,9 @@
 require 'ast'
 require 'unparser'
-require 'oblivion'
 
-require_relative 'support/coverage.rb'
 require_relative 'support/matchers.rb'
+require_relative 'support/coverage.rb'
+require_relative '../lib/oblivion.rb'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

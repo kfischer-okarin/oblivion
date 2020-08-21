@@ -18,10 +18,9 @@ module RubyUglifier
     end
 
     def on_def(node)
-      method_name = node.children[0]
-      add method_name
-
-      node
+      node.tap { |n|
+        add n.name
+      }
     end
 
     ignore_nodes :class, :sclass

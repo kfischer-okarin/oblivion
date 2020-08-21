@@ -12,12 +12,11 @@ module RubyUglifier
     LETTERS = ('a'..'z').to_a.freeze
 
     def on_def(node)
-      name, args, body = node.children
-      new_children = [*node.children]
-      new_children[0] = @method_names[name] if @method_names.key? name
-      new_children[2] = MethodUglifier.new(@method_names).process(body)
+      result = node
+      result = result.with_name @method_names[node.name] if @method_names.key?(node.name)
+      result = result.with_body MethodUglifier.new(@method_names).process(node.body)
 
-      node.updated(nil, new_children)
+      result
     end
 
     # TODO: Uglify instance_variables

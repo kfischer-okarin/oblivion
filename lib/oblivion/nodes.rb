@@ -93,5 +93,15 @@ module Oblivion
         with_method_name(new_method_names[method_name])
       end
     end
+
+    class Sym < Base
+      children :name
+
+      def renamed(new_method_names)
+        return self unless new_method_names.key?(name)
+
+        with_name(new_method_names[name])
+      end
+    end
   end
 end

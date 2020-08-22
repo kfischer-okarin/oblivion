@@ -30,12 +30,8 @@ module Oblivion
       case node.method_name
       when :public, :protected, :private
         on_access_modifier(node)
-        # TODO: Uglify instance_variables
-        # when :attr_reader, :attr_writer, :attr_accessor
-        #   method_names = node.children[2..-1].map { |n| n.children[0] }
-        #   method_names.each do |method_name|
-        #     add_to_result method_name
-        #   end
+      when :attr_reader, :attr_writer, :attr_accessor
+        on_ivar_accessor(node)
       end
       node
     end
@@ -53,6 +49,13 @@ module Oblivion
 
     def on_access_modifier(node)
       @access_modifier = node.method_name
+    end
+
+    def on_ivar_accessor(node)
+      method_names = node.args.map(&:name)
+      method_names.each do |method_name|
+        add method_name
+      end
     end
   end
 end

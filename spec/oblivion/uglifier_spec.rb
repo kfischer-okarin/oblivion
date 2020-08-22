@@ -99,6 +99,25 @@ RSpec.describe Oblivion::Uglifier do
 
         include_examples 'expected class body'
       end
+
+      shared_examples 'instance variable accessors' do |accessor_type|
+        describe "public #{accessor_type}" do
+          let(:class_body) {
+            <<~RUBY
+              #{accessor_type} :method, :method2
+            RUBY
+          }
+          let(:expected_body) {
+            a_node(:send, nil, accessor_type, s(:sym, :method), s(:sym, :method2))
+          }
+
+          include_examples 'expected class body'
+        end
+      end
+
+      include_examples 'instance variable accessors', :attr_reader
+      include_examples 'instance variable accessors', :attr_writer
+      include_examples 'instance variable accessors', :attr_accessor
     end
 
     describe 'changed' do
@@ -114,30 +133,29 @@ RSpec.describe Oblivion::Uglifier do
         include_examples 'expected class body'
       end
 
-      # TODO: Uglify instance_variables
-      # shared_examples 'method definer' do |method_definer|
-      #   describe "private #{method_definer}" do
-      #     let(:class_body) {
-      #       <<~RUBY
-      #         private
-      #         #{method_definer} :method, :method2
-      #       RUBY
-      #     }
-      #     let(:expected_body) {
-      #       a_node(:send,
-      #              nil,
-      #              method_definer,
-      #              an_object_not_eq_to(s(:sym, :method)),
-      #              an_object_not_eq_to(s(:sym, :method2)))
-      #     }
+      shared_examples 'instance variable accessors' do |accessor_type|
+        describe "private #{accessor_type}" do
+          let(:class_body) {
+            <<~RUBY
+              private
+              #{accessor_type} :method, :method2
+            RUBY
+          }
+          let(:expected_body) {
+            a_node(:send,
+                   nil,
+                   accessor_type,
+                   an_object_not_eq_to(s(:sym, :method)),
+                   an_object_not_eq_to(s(:sym, :method2)))
+          }
 
-      #     include_examples 'expected class body'
-      #   end
-      # end
+          include_examples 'expected class body'
+        end
+      end
 
-      # include_examples 'method definer', :attr_reader
-      # include_examples 'method definer', :attr_writer
-      # include_examples 'method definer', :attr_accessor
+      include_examples 'instance variable accessors', :attr_reader
+      include_examples 'instance variable accessors', :attr_writer
+      include_examples 'instance variable accessors', :attr_accessor
 
       describe 'private methods in inline classes' do
         let(:class_body) {

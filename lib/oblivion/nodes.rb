@@ -44,7 +44,9 @@ module Oblivion
 
     module_function
 
-    def parse(node)
+    def wrap(node)
+      return node if node.is_a?(Nodes::Base) || !node.is_a?(AST::Node)
+
       node_type = node.type
       class_name = Strings::Case.pascalcase(node_type.to_s)
 

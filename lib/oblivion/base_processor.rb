@@ -7,7 +7,7 @@ module Oblivion
     include AST::Processor::Mixin
 
     def process(node)
-      super(node ? Nodes.parse(node) : node)
+      super Nodes.wrap(node)
     end
 
     def handler_missing(node)

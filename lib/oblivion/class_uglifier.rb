@@ -18,7 +18,7 @@ module Oblivion
       result = node
       method_name = node.name
       result = result.with_name @method_names[method_name] if @method_names.key? method_name
-      result.with_body MethodUglifier.new(@method_names).process(node.body)
+      result.with_body RewriteMethodBody.new(@method_names).process(node.body)
     end
 
     # TODO: Uglify instance_variables

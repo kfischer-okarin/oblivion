@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Oblivion
-  class MethodUglifier < BaseProcessor
+  class RewriteMethodBody < BaseProcessor
     def initialize(method_names)
       super()
       @method_names = method_names

@@ -6,8 +6,6 @@ module Oblivion
       new.process(ast)
     end
 
-    alias on_class uglify_class
-
     private
 
     def initialize

@@ -64,6 +64,16 @@ module Oblivion
       end
     end
 
+    class Class < Base
+      def uglified
+        methods = MethodFinder.methods_of_class(self)
+        methods_to_uglify = methods[:private] - Set.new([:initialize])
+        with_processed_children ClassUglifier.new(methods_to_uglify)
+      end
+    end
+
+    class Sclass < Class; end
+
     class Def < Base
       children :name, :args, :body
     end

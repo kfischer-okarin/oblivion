@@ -27,10 +27,10 @@ module Oblivion
     ignore_nodes :class, :sclass
 
     def on_send(node)
-      called_method = node.children[1]
-      case called_method
+      method = node.method_name
+      case method
       when :public, :protected, :private
-        @access_modifier = called_method
+        @access_modifier = method
         # TODO: Uglify instance_variables
         # when :attr_reader, :attr_writer, :attr_accessor
         #   method_names = node.children[2..-1].map { |n| n.children[0] }

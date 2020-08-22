@@ -1,17 +1,11 @@
 # frozen_string_literal: true
 
-require 'ast'
+require 'parser'
 
 module Oblivion
-  class BaseProcessor
-    include AST::Processor::Mixin
-
+  class BaseProcessor < Parser::AST::Processor
     def process(node)
       super Nodes.wrap(node)
-    end
-
-    def handler_missing(node)
-      node.with_processed_children(self)
     end
 
     def uglify_class(node)

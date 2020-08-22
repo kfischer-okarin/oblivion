@@ -8,7 +8,7 @@ module Oblivion
     end
 
     def on_send(node)
-      node.with_renamed_methods(@method_names)
+      super(node).renamed(@method_names)
     end
   end
 end

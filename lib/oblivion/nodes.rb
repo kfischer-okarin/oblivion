@@ -24,12 +24,6 @@ module Oblivion
 
     class Base < Parser::AST::Node
       class << self
-        def rename_all_nodes(nodes, new_method_names)
-          nodes.map { |node|
-            node.is_a?(Nodes::Base) ? node.with_renamed_methods(new_method_names) : node
-          }
-        end
-
         def children(*attribute_names)
           attribute_names.each.with_index do |name, index|
             child(name, index)
@@ -68,10 +62,6 @@ module Oblivion
         }
         updated(nil, new_children)
       end
-
-      def with_renamed_methods(new_method_names)
-        updated(nil, Nodes::Base.rename_all_nodes(children, new_method_names))
-      end
     end
 
     class Def < Base
@@ -87,14 +77,10 @@ module Oblivion
         !receiver || receiver.type == :self
       end
 
-      def with_renamed_methods(new_method_names)
-        result = self
-        if receiver_is_self? && new_method_names.key?(method_name)
-          result = result.with_method_name(new_method_names[method_name])
-        end
+      def renamed(new_method_names)
+        return self unless receiver_is_self? && new_method_names.key?(method_name)
 
-        result = result.with_receiver receiver.with_renamed_methods(new_method_names) if receiver.is_a? Nodes::Base
-        result.with_args Nodes::Base.rename_all_nodes(args, new_method_names)
+        with_method_name(new_method_names[method_name])
       end
     end
   end

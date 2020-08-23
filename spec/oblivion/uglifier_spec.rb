@@ -3,7 +3,7 @@
 require_relative '../spec_helper'
 
 RSpec.describe Oblivion::Uglifier do
-  subject(:result) { described_class.process(Unparser.parse(source), TestRenamer.new) }
+  subject(:result) { described_class.process(Unparser.parse(source), TestRenamer) }
 
   class TestRenamer < Oblivion::Renamer
     def generate_new_name(original_name)
@@ -220,6 +220,38 @@ RSpec.describe Oblivion::Uglifier do
         private
 
         def r_method; end
+      end
+    RUBY
+  end
+
+  describe 'Method bodies: renames are independent per class/module' do
+    let(:source) {
+      <<~RUBY
+        class SomeClass
+          def public_method; end
+
+          private
+
+          def method; end
+        end
+
+        class OtherClass
+          def method; end
+        end
+      RUBY
+    }
+
+    include_examples 'it will produce equivalent of', <<~RUBY
+      class SomeClass
+        def public_method; end
+
+        private
+
+        def r_method; end
+      end
+
+      class OtherClass
+        def method; end
       end
     RUBY
   end

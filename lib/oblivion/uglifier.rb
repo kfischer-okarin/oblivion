@@ -2,11 +2,12 @@
 
 module Oblivion
   class Uglifier < BaseProcessor
-    def self.process(ast, renamer = nil)
-      new(renamer).process(ast)
+    def self.process(ast, renamer_class = nil)
+      new(renamer_class).process(ast)
     end
 
     def on_class(node)
+      renamer = renamer_class.new
       MethodFinder.methods_of_class(node, renamer)
       node.with_processed_children ClassUglifier.new(renamer)
     end
@@ -15,13 +16,13 @@ module Oblivion
 
     protected
 
-    attr_reader :renamer
+    attr_reader :renamer_class
 
     private
 
-    def initialize(renamer)
+    def initialize(renamer_class)
       super()
-      @renamer = renamer || Renamer::Random.new
+      @renamer_class = renamer_class || Renamer::Random
     end
   end
 end

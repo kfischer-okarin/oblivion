@@ -3,14 +3,15 @@
 module Oblivion
   class ClassUglifier < Uglifier
     def initialize(renamer)
-      super(renamer)
+      super(renamer.class)
+      @renamer = renamer
     end
 
     def on_def(node)
       result = node
       method_name = node.name
-      result = result.with_name renamer.new_name_of(method_name) if renamer.was_renamed? method_name
-      result.with_body RewriteMethodBody.new(renamer).process(node.body)
+      result = result.with_name @renamer.new_name_of(method_name) if @renamer.was_renamed? method_name
+      result.with_body RewriteMethodBody.new(@renamer).process(node.body)
     end
 
     def on_send(node)
@@ -20,9 +21,9 @@ module Oblivion
     end
 
     def on_sym(node)
-      return node unless renamer.was_renamed? node.name
+      return node unless @renamer.was_renamed? node.name
 
-      node.renamed(renamer)
+      node.renamed(@renamer)
     end
   end
 end

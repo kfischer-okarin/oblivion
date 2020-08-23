@@ -3,205 +3,193 @@
 require_relative '../spec_helper'
 
 RSpec.describe Oblivion::Uglifier do
-  subject(:result) { described_class.process(Unparser.parse(source)) }
+  subject(:result) { described_class.process(Unparser.parse(source), TestRenamer.new) }
+
+  class TestRenamer < Oblivion::Renamer
+    def generate_new_name(original_name)
+      :"r_#{original_name}"
+    end
+  end
+
+  shared_examples 'it will produce equivalent of' do |expected_body|
+    it { is_expected.to eq Unparser.parse(expected_body) }
+  end
+
+  shared_examples 'it will not change' do |source|
+    let(:source) { source }
+
+    include_examples 'it will produce equivalent of', source
+  end
 
   describe 'Method names' do
-    let(:source) {
-      <<~RUBY
+    describe 'public and protected methods are unchanged' do
+      include_examples 'it will not change', <<~RUBY
         class SomeClass
-          #{class_body}
+          def public_method; end
+
+          protected
+          def protected_method; end
         end
       RUBY
-    }
-
-    shared_examples 'expected class body' do
-      it { is_expected.to include(expected_body) }
     end
 
-    describe 'unchanged' do
-      describe 'public methods' do
-        let(:class_body) {
-          <<~RUBY
-            def public_method; end
-          RUBY
-        }
-        let(:expected_body) { a_method_definition(:public_method) }
+    describe 'public and protected attribute accessors are unchanged' do
+      include_examples 'it will not change', <<~RUBY
+        class SomeClass
+          attr_reader :public_attr_a
+          attr_writer :public_attr_a
+          attr_accessor :public_attr_b
 
-        include_examples 'expected class body'
-      end
+          protected
+          attr_reader :protected_attr_a
+          attr_writer :protected_attr_a
+          attr_accessor :protected_attr_b
+        end
+      RUBY
+    end
 
-      describe 'protected methods' do
-        let(:class_body) {
-          <<~RUBY
-            protected
-            def protected_method; end
-          RUBY
-        }
-        let(:expected_body) { a_method_definition(:protected_method) }
+    describe 'private initialize methods are unchanged' do
+      include_examples 'it will not change', <<~RUBY
+        class SomeClass
+          private
+          def initialize; end
+        end
+      RUBY
+    end
 
-        include_examples 'expected class body'
-      end
-
-      describe 'public methods after private methods' do
-        let(:class_body) {
-          <<~RUBY
+    describe 'public methods after private methods will not change' do
+      let(:source) {
+        <<~RUBY
+          class SomeClass
             private
             def method; end
             public
             def public_method; end
-          RUBY
-        }
-        let(:expected_body) { a_method_definition(:public_method) }
+          end
+        RUBY
+      }
 
-        include_examples 'expected class body'
-      end
-
-      describe 'methods after inline classes with private methods' do
-        let(:class_body) {
-          <<~RUBY
-            class Inline
-              private
-              def method; end
-            end
-
-            def public_method; end
-          RUBY
-        }
-        let(:expected_body) { a_method_definition(:public_method) }
-
-        include_examples 'expected class body'
-      end
-
-      describe 'methods after class method blocks with private methods' do
-        let(:class_body) {
-          <<~RUBY
-            class << self
-              private
-              def method; end
-            end
-
-            def public_method; end
-          RUBY
-        }
-        let(:expected_body) { a_method_definition(:public_method) }
-
-        include_examples 'expected class body'
-      end
-
-      describe 'private initialize method' do
-        let(:class_body) {
-          <<~RUBY
-            private
-            def initialize; end
-          RUBY
-        }
-        let(:expected_body) { a_method_definition(:initialize) }
-
-        include_examples 'expected class body'
-      end
-
-      shared_examples 'instance variable accessors' do |accessor_type|
-        describe "public #{accessor_type}" do
-          let(:class_body) {
-            <<~RUBY
-              #{accessor_type} :method, :method2
-            RUBY
-          }
-          let(:expected_body) {
-            a_node(:send, nil, accessor_type, s(:sym, :method), s(:sym, :method2))
-          }
-
-          include_examples 'expected class body'
+      include_examples 'it will produce equivalent of', <<~RUBY
+        class SomeClass
+          private
+          def r_method; end
+          public
+          def public_method; end
         end
-      end
-
-      include_examples 'instance variable accessors', :attr_reader
-      include_examples 'instance variable accessors', :attr_writer
-      include_examples 'instance variable accessors', :attr_accessor
+      RUBY
     end
 
-    describe 'changed' do
-      describe 'private methods' do
-        let(:class_body) {
-          <<~RUBY
+    describe 'private methods will be renamed' do
+      let(:source) {
+        <<~RUBY
+          class SomeClass
             private
             def method; end
-          RUBY
-        }
-        let(:expected_body) { a_method_definition(an_object_not_eq_to(:method)) }
+          end
+        RUBY
+      }
 
-        include_examples 'expected class body'
-      end
-
-      shared_examples 'instance variable accessors' do |accessor_type|
-        describe "private #{accessor_type}" do
-          let(:class_body) {
-            <<~RUBY
-              private
-              #{accessor_type} :method, :method2
-            RUBY
-          }
-          let(:expected_body) {
-            a_node(:send,
-                   nil,
-                   accessor_type,
-                   an_object_not_eq_to(s(:sym, :method)),
-                   an_object_not_eq_to(s(:sym, :method2)))
-          }
-
-          include_examples 'expected class body'
+      include_examples 'it will produce equivalent of', <<~RUBY
+        class SomeClass
+          private
+          def r_method; end
         end
-      end
+      RUBY
+    end
 
-      include_examples 'instance variable accessors', :attr_reader
-      include_examples 'instance variable accessors', :attr_writer
-      include_examples 'instance variable accessors', :attr_accessor
+    describe 'private attribute accessors will be renamed' do
+      let(:source) {
+        <<~RUBY
+          class SomeClass
+            private
+            attr_reader :attr_a
+            attr_writer :attr_b
+            attr_accessor :attr_c
+          end
+        RUBY
+      }
 
-      describe 'private methods in inline classes' do
-        let(:class_body) {
-          <<~RUBY
+      include_examples 'it will produce equivalent of', <<~RUBY
+        class SomeClass
+          private
+            attr_reader :r_attr_a
+            attr_writer :r_attr_b
+            attr_accessor :r_attr_c
+        end
+      RUBY
+    end
+
+    describe 'public methods after inline classes with private methods will not change' do
+      let(:source) {
+        <<~RUBY
+          class SomeClass
             class Inline
               private
               def method; end
             end
-          RUBY
-        }
 
-        let(:expected_body) {
-          a_node(:class,
-                 s(:const, nil, :Inline), nil,
-                 including(a_method_definition(an_object_not_eq_to(:method))))
-        }
+            def public_method; end
+          end
+        RUBY
+      }
 
-        include_examples 'expected class body'
-      end
+      include_examples 'it will produce equivalent of', <<~RUBY
+        class SomeClass
+          class Inline
+            private
+            def r_method; end
+          end
 
-      describe 'private methods in class method blocks' do
-        let(:class_body) {
-          <<~RUBY
+          def public_method; end
+        end
+      RUBY
+    end
+
+    describe 'public methods after class method blocks with private methods will not change' do
+      let(:source) {
+        <<~RUBY
+          class SomeClass
             class << self
               private
               def method; end
             end
-          RUBY
-        }
 
-        let(:expected_body) {
-          a_node(:sclass, s(:self),
-                 including(a_method_definition(an_object_not_eq_to(:method))))
-        }
+            def public_method; end
+          end
+        RUBY
+      }
 
-        include_examples 'expected class body'
-      end
+      include_examples 'it will produce equivalent of', <<~RUBY
+        class SomeClass
+          class << self
+            private
+            def r_method; end
+          end
+
+          def public_method; end
+        end
+      RUBY
     end
   end
 
-  describe 'Usages of renamed private methods' do
+  describe 'Method bodies of renamed private methods' do
     let(:source) {
       <<~RUBY
         class SomeClass
           def public_method
-            #{method_body}
+            method
+            self.method
+            local_var = method
+            @ivar = method
+            method.other_method
+          end
+
+          def other_public_method
+            some_array[2] = method
+            some_array.each do |el|
+              method
+            end
+            result = (result | method)
           end
 
           private
@@ -211,90 +199,28 @@ RSpec.describe Oblivion::Uglifier do
       RUBY
     }
 
-    shared_examples 'expected method body' do
-      it { is_expected.to include(a_method_definition(:public_method).with_body(expected_body)) }
-    end
+    include_examples 'it will produce equivalent of', <<~RUBY
+      class SomeClass
+        def public_method
+          r_method
+          self.r_method
+          local_var = r_method
+          @ivar = r_method
+          r_method.other_method
+        end
 
-    let(:new_method_name) {
-      renamed_method = result.self_and_descendants.select { |n| n.type == :def }.last
-      renamed_method.children[0]
-    }
-
-    let(:method_call_with_new_name) {
-      s(:send, nil, new_method_name)
-    }
-
-    context 'called without receiver' do
-      let(:method_body) { 'method' }
-      let(:expected_body) { method_call_with_new_name }
-
-      include_examples 'expected method body'
-    end
-
-    context 'called with self receiver' do
-      let(:method_body) { 'self.method' }
-      let(:expected_body) { s(:send, s(:self), new_method_name) }
-
-      include_examples 'expected method body'
-    end
-
-    context 'on the right hand of a local variable assignment' do
-      let(:method_body) { 'local_var = method' }
-      let(:expected_body) { s(:lvasgn, :local_var, method_call_with_new_name) }
-
-      include_examples 'expected method body'
-    end
-
-    context 'on the right hand of an instance variable assignment' do
-      let(:method_body) { '@ivar = method' }
-      let(:expected_body) { s(:ivasgn, :@ivar, method_call_with_new_name) }
-
-      include_examples 'expected method body'
-    end
-
-    context 'on the right hand of an assignment to an array/hash index' do
-      let(:method_body) { '@ivar[1] = method' }
-      let(:expected_body) { s(:indexasgn, s(:ivar, :@ivar), s(:int, 1), method_call_with_new_name) }
-
-      include_examples 'expected method body'
-    end
-
-    context 'as receiver of a method' do
-      let(:method_body) { 'method.other_method' }
-      let(:expected_body) { s(:send, method_call_with_new_name, :other_method) }
-
-      include_examples 'expected method body'
-    end
-
-    context 'inside a block' do
-      let(:method_body) {
-        <<~RUBY
-          (1..10).each do |i|
-            method
+        def other_public_method
+          some_array[2] = r_method
+          some_array.each do |el|
+            r_method
           end
-        RUBY
-      }
-      let(:expected_body) {
-        s(:block,
-          s(:send, s(:begin, s(:irange, s(:int, 1), s(:int, 10))), :each),
-          s(:args, s(:procarg0, s(:arg, :i))),
-          method_call_with_new_name)
-      }
+          result = (result | r_method)
+        end
 
-      include_examples 'expected method body'
-    end
+        private
 
-    context 'inside a complex expression' do
-      let(:method_body) {
-        <<~RUBY
-          result = (result | method)
-        RUBY
-      }
-      let(:expected_body) {
-        s(:lvasgn, :result, s(:begin, s(:send, s(:lvar, :result), :|, method_call_with_new_name)))
-      }
-
-      include_examples 'expected method body'
-    end
+        def r_method; end
+      end
+    RUBY
   end
 end

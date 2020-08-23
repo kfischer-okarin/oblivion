@@ -22,7 +22,7 @@ module Oblivion
     def on_sym(node)
       return node unless renamer.was_renamed? node.name
 
-      node.with_name renamer.new_name_of(node.name)
+      node.renamed(renamer)
     end
   end
 end

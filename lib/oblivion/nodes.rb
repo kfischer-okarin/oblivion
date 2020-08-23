@@ -81,10 +81,18 @@ module Oblivion
       def receiver_is_self?
         !receiver || receiver.type == :self
       end
+
+      def renamed(renamer)
+        with_method_name renamer.new_name_of(method_name)
+      end
     end
 
     class Sym < Base
       children :name
+
+      def renamed(renamer)
+        with_name renamer.new_name_of(name)
+      end
     end
   end
 end

@@ -11,7 +11,7 @@ module Oblivion
       result = super(node)
       return result unless node.receiver_is_self? && @renamer.was_renamed?(node.method_name)
 
-      node.with_method_name @renamer.new_name_of(node.method_name)
+      result.renamed @renamer
     end
   end
 end

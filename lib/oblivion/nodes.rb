@@ -87,6 +87,30 @@ module Oblivion
       end
     end
 
+    class Ivar < Base
+      def name
+        Ivar.strip_first_character(children[0])
+      end
+
+      def with_name(value)
+        new_children = Array.new(children)
+        new_children[0] = :"@#{value}"
+        updated(nil, new_children)
+      end
+
+      def self.strip_first_character(symbol)
+        symbol.to_s[1..-1].to_sym
+      end
+
+      def renamed(renamer)
+        with_name renamer.new_name_of(name)
+      end
+    end
+
+    class Ivasgn < Ivar
+      child :value, 1
+    end
+
     class Sym < Base
       children :name
 

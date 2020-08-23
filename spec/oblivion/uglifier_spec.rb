@@ -172,7 +172,7 @@ RSpec.describe Oblivion::Uglifier do
     end
   end
 
-  describe 'Method bodies of renamed private methods' do
+  describe 'Method bodies: with renamed private methods' do
     let(:source) {
       <<~RUBY
         class SomeClass
@@ -220,6 +220,36 @@ RSpec.describe Oblivion::Uglifier do
         private
 
         def r_method; end
+      end
+    RUBY
+  end
+
+  describe 'Method bodies: instance variable with private attribute accessors' do
+    let(:source) {
+      <<~RUBY
+        class SomeClass
+          def public_method
+            @ivar = 4
+            @ivar + @ivar
+          end
+
+          private
+
+          attr_reader :ivar
+        end
+      RUBY
+    }
+
+    include_examples 'it will produce equivalent of', <<~RUBY
+      class SomeClass
+        def public_method
+          @r_ivar = 4
+          @r_ivar + @r_ivar
+        end
+
+        private
+
+        attr_reader :r_ivar
       end
     RUBY
   end

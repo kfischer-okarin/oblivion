@@ -21,12 +21,6 @@ module Oblivion
     def new_name_of(original_name)
       @new_names[original_name]
     end
-
-    private
-
-    def generate_new_name(_original_name)
-      raise NotImplementedError
-    end
   end
 
   class Renamer

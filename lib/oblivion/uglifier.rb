@@ -10,7 +10,6 @@ module Oblivion
 
     def initialize
       super
-      @method_names_by_class = {}
     end
   end
 end

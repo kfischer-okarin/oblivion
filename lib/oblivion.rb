@@ -2,6 +2,7 @@
 
 require 'unparser'
 
+require_relative 'oblivion/renamer'
 require_relative 'oblivion/nodes'
 require_relative 'oblivion/base_processor'
 require_relative 'oblivion/method_finder'

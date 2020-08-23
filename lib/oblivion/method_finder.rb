@@ -4,19 +4,8 @@ require 'set'
 
 module Oblivion
   class MethodFinder < BaseProcessor
-    def self.methods_of_class(class_node)
-      new.instance_eval {
-        process_all(class_node.children)
-        method_names
-      }
-    end
-
-    def method_names
-      @method_names ||= {
-        public: Set.new,
-        protected: Set.new,
-        private: Set.new
-      }
+    def self.methods_of_class(class_node, renamer)
+      new(renamer).process_all(class_node)
     end
 
     def on_def(node)
@@ -38,13 +27,14 @@ module Oblivion
 
     private
 
-    def initialize
-      super
+    def initialize(renamer)
+      super()
       @access_modifier = :public
+      @renamer = renamer
     end
 
     def add(method_name)
-      method_names[@access_modifier] << method_name
+      @renamer.rename method_name if @access_modifier == :private && method_name != :initialize
     end
 
     def on_access_modifier(node)

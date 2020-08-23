@@ -4,8 +4,8 @@ require 'securerandom'
 
 module Oblivion
   class ClassUglifier < Uglifier
-    def initialize(methods)
-      super()
+    def initialize(renamer, methods)
+      super(renamer)
       @method_names = {}
       methods.each do |name|
         @method_names[name] = random_method_name(name)

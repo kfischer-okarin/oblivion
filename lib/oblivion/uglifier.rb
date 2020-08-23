@@ -3,21 +3,22 @@
 module Oblivion
   class Uglifier < BaseProcessor
     def self.process(ast)
-      new.process(ast)
+      new(Renamer.new).process(ast)
     end
 
     def on_class(node)
-      methods = MethodFinder.methods_of_class(node)
-      methods_to_uglify = methods[:private] - Set.new([:initialize])
-      node.with_processed_children ClassUglifier.new(methods_to_uglify)
+      MethodFinder.methods_of_class(node, @renamer)
+      methods_to_uglify = @renamer.renamed_methods
+      node.with_processed_children ClassUglifier.new(@renamer, methods_to_uglify)
     end
 
     alias on_sclass on_class
 
     private
 
-    def initialize
-      super
+    def initialize(renamer)
+      super()
+      @renamer = renamer
     end
   end
 end

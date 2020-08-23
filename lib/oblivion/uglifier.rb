@@ -8,8 +8,7 @@ module Oblivion
 
     def on_class(node)
       MethodFinder.methods_of_class(node, @renamer)
-      methods_to_uglify = @renamer.renamed_methods
-      node.with_processed_children ClassUglifier.new(@renamer, methods_to_uglify)
+      node.with_processed_children ClassUglifier.new(@renamer)
     end
 
     alias on_sclass on_class

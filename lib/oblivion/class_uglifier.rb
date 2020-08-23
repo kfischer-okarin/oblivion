@@ -1,18 +1,11 @@
 # frozen_string_literal: true
 
-require 'securerandom'
-
 module Oblivion
   class ClassUglifier < Uglifier
-    def initialize(renamer, methods)
+    def initialize(renamer)
       super(renamer)
-      @method_names = {}
-      methods.each do |name|
-        @method_names[name] = random_method_name(name)
-      end
+      @method_names = renamer.new_names
     end
-
-    LETTERS = ('a'..'z').to_a.freeze
 
     def on_def(node)
       result = node
@@ -31,18 +24,6 @@ module Oblivion
       return node unless @method_names.key?(node.name)
 
       node.with_name(@method_names[node.name])
-    end
-
-    private
-
-    def random_method_name(original_name)
-      loop do
-        new_name = LETTERS.sample + SecureRandom.alphanumeric(10)
-        unless @method_names.key? new_name
-          @method_names[original_name] = new_name
-          return new_name
-        end
-      end
     end
   end
 end

@@ -35,6 +35,12 @@ module Oblivion
           define_update_method(name, index)
         end
 
+        def renameable(attribute = :name)
+          define_method :renamed do |renamer|
+            send :"with_#{attribute}", renamer.new_name_of(send(attribute))
+          end
+        end
+
         private
 
         def define_getter(name, child_index)
@@ -78,16 +84,16 @@ module Oblivion
 
       child :args, (2..-1)
 
+      renameable :method_name
+
       def receiver_is_self?
         !receiver || receiver.type == :self
-      end
-
-      def renamed(renamer)
-        with_method_name renamer.new_name_of(method_name)
       end
     end
 
     class Ivar < Base
+      renameable
+
       def name
         Ivar.strip_first_character(children[0])
       end
@@ -101,10 +107,6 @@ module Oblivion
       def self.strip_first_character(symbol)
         symbol.to_s[1..-1].to_sym
       end
-
-      def renamed(renamer)
-        with_name renamer.new_name_of(name)
-      end
     end
 
     class Ivasgn < Ivar
@@ -114,9 +116,7 @@ module Oblivion
     class Sym < Base
       children :name
 
-      def renamed(renamer)
-        with_name renamer.new_name_of(name)
-      end
+      renameable
     end
   end
 end

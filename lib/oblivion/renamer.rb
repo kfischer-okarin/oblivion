@@ -6,18 +6,22 @@ module Oblivion
   class Renamer
     LETTERS = ('a'..'z').to_a.freeze
 
-    attr_reader :renamed_methods, :new_names
-
     def initialize
-      @renamed_methods = Set.new
       @new_names = {}
       @used_names = Set.new
     end
 
+    def was_renamed?(name)
+      @new_names.key? name
+    end
+
     def rename(name)
-      @renamed_methods << name
       @new_names[name] = generate_new_name(name)
       @used_names << @new_names[name]
+    end
+
+    def new_name_of(original_name)
+      @new_names[original_name]
     end
 
     def generate_new_name(_original_name)

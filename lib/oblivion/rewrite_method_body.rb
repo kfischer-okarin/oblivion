@@ -2,16 +2,16 @@
 
 module Oblivion
   class RewriteMethodBody < BaseProcessor
-    def initialize(method_names)
+    def initialize(renamer)
       super()
-      @method_names = method_names
+      @renamer = renamer
     end
 
     def on_send(node)
       result = super(node)
-      return result unless node.receiver_is_self? && @method_names.key?(node.method_name)
+      return result unless node.receiver_is_self? && @renamer.was_renamed?(node.method_name)
 
-      node.with_method_name(@method_names[node.method_name])
+      node.with_method_name @renamer.new_name_of(node.method_name)
     end
   end
 end

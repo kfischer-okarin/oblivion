@@ -65,11 +65,6 @@ module Oblivion
     end
 
     class Class < Base
-      def uglified
-        methods = MethodFinder.methods_of_class(self)
-        methods_to_uglify = methods[:private] - Set.new([:initialize])
-        with_processed_children ClassUglifier.new(methods_to_uglify)
-      end
     end
 
     class Sclass < Class; end
@@ -86,22 +81,10 @@ module Oblivion
       def receiver_is_self?
         !receiver || receiver.type == :self
       end
-
-      def renamed(new_method_names)
-        return self unless receiver_is_self? && new_method_names.key?(method_name)
-
-        with_method_name(new_method_names[method_name])
-      end
     end
 
     class Sym < Base
       children :name
-
-      def renamed(new_method_names)
-        return self unless new_method_names.key?(name)
-
-        with_name(new_method_names[name])
-      end
     end
   end
 end

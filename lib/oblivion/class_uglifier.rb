@@ -28,7 +28,9 @@ module Oblivion
     end
 
     def on_sym(node)
-      node.renamed(@method_names)
+      return node unless @method_names.key?(node.name)
+
+      node.with_name(@method_names[node.name])
     end
 
     private

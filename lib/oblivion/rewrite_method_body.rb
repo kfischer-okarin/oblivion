@@ -8,7 +8,10 @@ module Oblivion
     end
 
     def on_send(node)
-      super(node).renamed(@method_names)
+      result = super(node)
+      return result unless node.receiver_is_self? && @method_names.key?(node.method_name)
+
+      node.with_method_name(@method_names[node.method_name])
     end
   end
 end

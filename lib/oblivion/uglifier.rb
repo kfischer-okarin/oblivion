@@ -2,8 +2,8 @@
 
 module Oblivion
   class Uglifier < BaseProcessor
-    def self.process(ast)
-      new(Renamer.new).process(ast)
+    def self.process(ast, renamer = nil)
+      new(renamer || Renamer::Random.new).process(ast)
     end
 
     def on_class(node)

@@ -25,9 +25,17 @@ module Oblivion
     end
 
     def generate_new_name(_original_name)
-      loop do
-        new_name = LETTERS.sample + SecureRandom.alphanumeric(10)
-        return new_name unless @used_names.include? new_name
+      raise NotImplementedError
+    end
+  end
+
+  class Renamer
+    class Random < Renamer
+      def generate_new_name(_original_name)
+        loop do
+          new_name = LETTERS.sample + SecureRandom.alphanumeric(10)
+          return new_name unless @used_names.include? new_name
+        end
       end
     end
   end

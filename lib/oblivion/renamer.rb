@@ -8,7 +8,6 @@ module Oblivion
 
     def initialize
       @new_names = {}
-      @used_names = Set.new
     end
 
     def was_renamed?(name)
@@ -17,12 +16,13 @@ module Oblivion
 
     def rename(name)
       @new_names[name] = generate_new_name(name)
-      @used_names << @new_names[name]
     end
 
     def new_name_of(original_name)
       @new_names[original_name]
     end
+
+    private
 
     def generate_new_name(_original_name)
       raise NotImplementedError
@@ -31,6 +31,17 @@ module Oblivion
 
   class Renamer
     class Random < Renamer
+      def initialize
+        super
+        @used_names = Set.new
+      end
+
+      def rename(name)
+        @used_names << super
+      end
+
+      private
+
       def generate_new_name(_original_name)
         loop do
           new_name = LETTERS.sample + SecureRandom.alphanumeric(10)

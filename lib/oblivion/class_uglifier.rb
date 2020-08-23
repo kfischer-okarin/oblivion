@@ -3,7 +3,7 @@
 require 'securerandom'
 
 module Oblivion
-  class ClassUglifier < BaseProcessor
+  class ClassUglifier < Uglifier
     def initialize(methods)
       super()
       @method_names = {}

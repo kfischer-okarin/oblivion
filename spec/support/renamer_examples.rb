@@ -4,28 +4,53 @@ RSpec.shared_examples 'Renamer' do
   describe 'Renamer common features' do
     let(:old_name) { 'old_name' }
 
-    describe '#rename' do
+    shared_examples 'rename common' do
       it 'marks the name as renamed' do
-        expect { renamer.rename(old_name) }.to(change { renamer.was_renamed?(old_name) }.from(false).to(true))
+        expect { rename(old_name) }.to(change { renamer.was_renamed?(old_name) }.from(false).to(true))
       end
 
       it 'creates a new name' do
-        renamer.rename(old_name)
+        rename(old_name)
         expect(renamer.new_name_of(old_name)).not_to eq old_name
       end
 
       it 'creates a different name for each method' do
         another_name = 'another_name'
-        renamer.rename(old_name)
-        renamer.rename(another_name)
+        rename(old_name)
+        rename(another_name)
         expect(renamer.new_name_of(old_name)).not_to eq renamer.new_name_of(another_name)
       end
 
       it 'creates a different name each time' do
-        renamer.rename(old_name)
+        rename(old_name)
         first_generated = renamer.new_name_of(old_name)
-        renamer.rename(old_name)
+        rename(old_name)
         expect(renamer.new_name_of(old_name)).not_to eq first_generated
+      end
+    end
+
+    describe '#rename' do
+      def rename(name)
+        renamer.rename(name)
+      end
+
+      include_examples 'rename common'
+    end
+
+    describe '#rename(local: true)' do
+      def rename(name)
+        renamer.rename(name, local: true)
+      end
+
+      include_examples 'rename common'
+    end
+
+    describe '#clear_local' do
+      subject(:clear_local) { renamer.clear_local }
+
+      it 'clears local names' do
+        renamer.rename(old_name, local: true)
+        expect { clear_local }.to(change { renamer.was_renamed?(old_name) }.from(true).to(false))
       end
     end
   end

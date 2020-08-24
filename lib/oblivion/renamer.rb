@@ -11,13 +11,12 @@ module Oblivion
       @local_new_names = {}
     end
 
-    def was_renamed?(name)
-      @new_names.key?(name) || @local_new_names.key?(name)
+    def was_renamed?(name, local: false)
+      names(local).key? name
     end
 
     def rename(name, local: false)
-      target = local ? @local_new_names : @new_names
-      target[name] = generate_new_name(name)
+      names(local)[name] = generate_new_name(name)
     end
 
     def new_name_of(original_name)
@@ -26,6 +25,12 @@ module Oblivion
 
     def clear_local
       @local_new_names.clear
+    end
+
+    private
+
+    def names(local)
+      local ? @local_new_names : @new_names
     end
   end
 

@@ -381,4 +381,35 @@ RSpec.describe Oblivion::Uglifier do
       end
     RUBY
   end
+
+  describe(
+    'Method bodies: references to public arguments will not be changed' \
+    'even if there is a private method with the same name'
+  ) do
+    let(:source) {
+      <<~RUBY
+        class SomeClass
+          def public_method(something)
+            @something = something
+          end
+
+          private
+
+          attr_reader :something
+        end
+      RUBY
+    }
+
+    include_examples 'it will produce equivalent of', <<~RUBY
+      class SomeClass
+        def public_method(something)
+          @r_something_1 = something
+        end
+
+        private
+
+        attr_reader :r_something_1
+      end
+    RUBY
+  end
 end

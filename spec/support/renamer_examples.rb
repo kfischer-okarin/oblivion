@@ -5,10 +5,6 @@ RSpec.shared_examples 'Renamer' do
     let(:old_name) { 'old_name' }
 
     shared_examples 'rename common' do
-      it 'marks the name as renamed' do
-        expect { rename(old_name) }.to(change { renamer.was_renamed?(old_name) }.from(false).to(true))
-      end
-
       it 'creates a new name' do
         rename(old_name)
         expect(renamer.new_name_of(old_name)).not_to eq old_name
@@ -35,6 +31,14 @@ RSpec.shared_examples 'Renamer' do
       end
 
       include_examples 'rename common'
+
+      it 'marks the name as renamed globally' do
+        expect { renamer.rename(old_name) }.to(change { renamer.was_renamed?(old_name) }.from(false).to(true))
+      end
+
+      it 'does not mark the name as renamed locally' do
+        expect { renamer.rename(old_name) }.not_to(change { renamer.was_renamed?(old_name, local: true) })
+      end
     end
 
     describe '#rename(local: true)' do
@@ -43,6 +47,16 @@ RSpec.shared_examples 'Renamer' do
       end
 
       include_examples 'rename common'
+
+      it 'marks the name as renamed locally' do
+        expect { renamer.rename(old_name, local: true) }.to(
+          change { renamer.was_renamed?(old_name, local: true) }.from(false).to(true)
+        )
+      end
+
+      it 'does not mark the name as renamed globally' do
+        expect { renamer.rename(old_name, local: true) }.not_to(change { renamer.was_renamed?(old_name) })
+      end
     end
 
     describe '#clear_local' do
@@ -50,7 +64,7 @@ RSpec.shared_examples 'Renamer' do
 
       it 'clears local names' do
         renamer.rename(old_name, local: true)
-        expect { clear_local }.to(change { renamer.was_renamed?(old_name) }.from(true).to(false))
+        expect { clear_local }.to(change { renamer.was_renamed?(old_name, local: true) }.from(true).to(false))
       end
     end
   end

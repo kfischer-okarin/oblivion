@@ -31,27 +31,27 @@ module Oblivion
 
     def on_ivar(node)
       result = super(node)
-      return result unless @renamer.was_renamed?(node.name)
+      return result unless @renamer.was_renamed? node.name
 
       result.renamed @renamer
     end
 
     def on_ivasgn(node)
       result = super(node)
-      return result unless @renamer.was_renamed?(node.name)
+      return result unless @renamer.was_renamed? node.name
 
       result.renamed @renamer
     end
 
     def on_lvar(node)
       result = super(node)
-      return result unless @renamer.was_renamed?(node.name)
+      return result unless @renamer.was_renamed? node.name, local: true
 
       result.renamed @renamer
     end
 
     def on_lvasgn(node)
-      @renamer.rename node.name, local: true unless @renamer.was_renamed? node.name
+      @renamer.rename node.name, local: true unless @renamer.was_renamed? node.name, local: true
       super(node).renamed @renamer
     end
   end

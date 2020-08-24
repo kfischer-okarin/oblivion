@@ -77,6 +77,8 @@ module Oblivion
 
     class Def < Base
       children :name, :args, :body
+
+      renameable
     end
 
     class Send < Base

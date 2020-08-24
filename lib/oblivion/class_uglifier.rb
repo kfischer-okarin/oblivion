@@ -8,9 +8,7 @@ module Oblivion
     end
 
     def on_def(node)
-      result = node
-      result = result.renamed(@renamer) if @renamer.was_renamed? result.name
-      result.with_body RewriteMethodBody.new(@renamer).process(node.body)
+      RewriteMethodBody.new(@renamer).process(node)
     end
 
     def on_send(node)

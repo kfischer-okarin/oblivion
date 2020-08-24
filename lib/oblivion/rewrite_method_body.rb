@@ -7,6 +7,12 @@ module Oblivion
       @renamer = renamer
     end
 
+    def on_def(node)
+      result = node
+      result = result.renamed(@renamer) if @renamer.was_renamed? result.name
+      super(result)
+    end
+
     def on_send(node)
       result = super(node)
       return result unless node.receiver_is_self? && @renamer.was_renamed?(node.method_name)

@@ -330,7 +330,7 @@ RSpec.describe Oblivion::Uglifier do
 
           def private_method
             my_local_var = 4
-            my_local_var + my_local_var
+            my_local_var += my_local_var
           end
         end
       RUBY
@@ -342,7 +342,7 @@ RSpec.describe Oblivion::Uglifier do
 
         def r_private_method_1
           r_my_local_var_2 = 4
-          r_my_local_var_2 + r_my_local_var_2
+          r_my_local_var_2 += r_my_local_var_2
         end
       end
     RUBY

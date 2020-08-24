@@ -347,4 +347,38 @@ RSpec.describe Oblivion::Uglifier do
       end
     RUBY
   end
+
+  describe 'Method bodies: method arguments of private methods will be renamed independently for each method' do
+    let(:source) {
+      <<~RUBY
+        class SomeClass
+          private
+
+          def private_method(value)
+            value + 2
+          end
+
+          def other_private_method(other_arg)
+            value = 5
+            other_arg + value
+          end
+        end
+      RUBY
+    }
+
+    include_examples 'it will produce equivalent of', <<~RUBY
+      class SomeClass
+        private
+
+        def r_private_method_1(r_lv_value_3)
+          r_lv_value_3 + 2
+        end
+
+        def r_other_private_method_2(r_lv_other_arg_4)
+          r_lv_value_5 = 5
+          r_lv_other_arg_4 + r_lv_value_5
+        end
+      end
+    RUBY
+  end
 end

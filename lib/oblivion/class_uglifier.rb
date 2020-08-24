@@ -8,7 +8,7 @@ module Oblivion
     end
 
     def on_def(node)
-      RewriteMethodBody.new(@renamer).process(node)
+      RewriteMethod.new(@renamer).process(node)
     end
 
     def on_send(node)

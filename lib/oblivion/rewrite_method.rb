@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Oblivion
-  class RewriteMethodBody < BaseProcessor
+  class RewriteMethod < BaseProcessor
     def initialize(renamer)
       super()
       @renamer = renamer

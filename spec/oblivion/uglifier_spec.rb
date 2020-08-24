@@ -6,8 +6,14 @@ RSpec.describe Oblivion::Uglifier do
   subject(:result) { described_class.process(Unparser.parse(source), TestRenamer) }
 
   class TestRenamer < Oblivion::Renamer
+    def initialize
+      super
+      @generated_count = 0
+    end
+
     def generate_new_name(original_name)
-      :"r_#{original_name}"
+      @generated_count += 1
+      :"r_#{original_name}_#{@generated_count}"
     end
   end
 
@@ -78,7 +84,7 @@ RSpec.describe Oblivion::Uglifier do
       include_examples 'it will produce equivalent of', <<~RUBY
         class SomeClass
           private
-          def r_method; end
+          def r_method_1; end
           public
           def public_method; end
         end
@@ -98,7 +104,7 @@ RSpec.describe Oblivion::Uglifier do
       include_examples 'it will produce equivalent of', <<~RUBY
         class SomeClass
           private
-          def r_method; end
+          def r_method_1; end
         end
       RUBY
     end
@@ -118,9 +124,9 @@ RSpec.describe Oblivion::Uglifier do
       include_examples 'it will produce equivalent of', <<~RUBY
         class SomeClass
           private
-            attr_reader :r_attr_a
-            attr_writer :r_attr_b
-            attr_accessor :r_attr_c
+            attr_reader :r_attr_a_1
+            attr_writer :r_attr_b_2
+            attr_accessor :r_attr_c_3
         end
       RUBY
     end
@@ -143,7 +149,7 @@ RSpec.describe Oblivion::Uglifier do
         class SomeClass
           class Inline
             private
-            def r_method; end
+            def r_method_1; end
           end
 
           def public_method; end
@@ -169,7 +175,7 @@ RSpec.describe Oblivion::Uglifier do
         class SomeClass
           class << self
             private
-            def r_method; end
+            def r_method_1; end
           end
 
           def public_method; end
@@ -208,24 +214,24 @@ RSpec.describe Oblivion::Uglifier do
     include_examples 'it will produce equivalent of', <<~RUBY
       class SomeClass
         def public_method
-          r_method
-          self.r_method
-          local_var = r_method
-          @ivar = r_method
-          r_method.other_method
+          r_method_1
+          self.r_method_1
+          local_var = r_method_1
+          @ivar = r_method_1
+          r_method_1.other_method
         end
 
         def other_public_method
-          some_array[2] = r_method
-          some_array.each do |r_lv_el|
-            r_method
+          some_array[2] = r_method_1
+          some_array.each do |r_lv_el_2|
+            r_method_1
           end
-          result = (result | r_method)
+          result = (result | r_method_1)
         end
 
         private
 
-        def r_method; end
+        def r_method_1; end
       end
     RUBY
   end
@@ -253,7 +259,7 @@ RSpec.describe Oblivion::Uglifier do
 
         private
 
-        def r_method; end
+        def r_method_1; end
       end
 
       class OtherClass
@@ -281,13 +287,13 @@ RSpec.describe Oblivion::Uglifier do
     include_examples 'it will produce equivalent of', <<~RUBY
       class SomeClass
         def public_method
-          @r_ivar = 4
-          @r_ivar + @r_ivar
+          @r_ivar_1 = 4
+          @r_ivar_1 + @r_ivar_1
         end
 
         private
 
-        attr_reader :r_ivar
+        attr_reader :r_ivar_1
       end
     RUBY
   end
@@ -309,8 +315,8 @@ RSpec.describe Oblivion::Uglifier do
       class SomeClass
         private
 
-        def r_private_method(r_lv_value1, r_lv_value2)
-          r_lv_value1 + r_lv_value2
+        def r_private_method_1(r_lv_value1_2, r_lv_value2_3)
+          r_lv_value1_2 + r_lv_value2_3
         end
       end
     RUBY

@@ -20,6 +20,13 @@ RSpec.shared_examples 'Renamer' do
         renamer.rename(another_name)
         expect(renamer.new_name_of(old_name)).not_to eq renamer.new_name_of(another_name)
       end
+
+      it 'creates a different name each time' do
+        renamer.rename(old_name)
+        first_generated = renamer.new_name_of(old_name)
+        renamer.rename(old_name)
+        expect(renamer.new_name_of(old_name)).not_to eq first_generated
+      end
     end
   end
 end

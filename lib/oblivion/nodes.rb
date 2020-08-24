@@ -130,5 +130,9 @@ module Oblivion
     end
 
     class Lvar < Arg; end
+
+    class Lvasgn < Lvar
+      child :value, 1
+    end
   end
 end

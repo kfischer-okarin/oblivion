@@ -216,17 +216,17 @@ RSpec.describe Oblivion::Uglifier do
         def public_method
           r_method_1
           self.r_method_1
-          local_var = r_method_1
+          r_lv_local_var_2 = r_method_1
           @ivar = r_method_1
           r_method_1.other_method
         end
 
         def other_public_method
           some_array[2] = r_method_1
-          some_array.each do |r_lv_el_2|
+          some_array.each do |r_lv_el_3|
             r_method_1
           end
-          result = (result | r_method_1)
+          r_lv_result_4 = (r_lv_result_4 | r_method_1)
         end
 
         private
@@ -317,6 +317,32 @@ RSpec.describe Oblivion::Uglifier do
 
         def r_private_method_1(r_lv_value1_2, r_lv_value2_3)
           r_lv_value1_2 + r_lv_value2_3
+        end
+      end
+    RUBY
+  end
+
+  describe 'Method bodies: local variables of private methods will be renamed' do
+    let(:source) {
+      <<~RUBY
+        class SomeClass
+          private
+
+          def private_method
+            my_local_var = 4
+            my_local_var + my_local_var
+          end
+        end
+      RUBY
+    }
+
+    include_examples 'it will produce equivalent of', <<~RUBY
+      class SomeClass
+        private
+
+        def r_private_method_1
+          r_lv_my_local_var_2 = 4
+          r_lv_my_local_var_2 + r_lv_my_local_var_2
         end
       end
     RUBY

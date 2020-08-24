@@ -48,5 +48,10 @@ module Oblivion
 
       result.renamed @renamer
     end
+
+    def on_lvasgn(node)
+      @renamer.rename :"lv_#{node.name}"
+      super(node).renamed @renamer
+    end
   end
 end

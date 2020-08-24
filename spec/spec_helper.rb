@@ -4,6 +4,7 @@ require 'ast'
 require 'unparser'
 
 require_relative 'support/coverage'
+require_relative 'support/renamer_examples'
 require_relative '../lib/oblivion'
 
 RSpec.configure do |config|

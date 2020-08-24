@@ -11,6 +11,12 @@ RSpec.describe Oblivion::Uglifier do
     end
   end
 
+  describe TestRenamer do
+    let(:renamer) { described_class.new }
+
+    include_examples 'Renamer'
+  end
+
   shared_examples 'it will produce equivalent of' do |expected_body|
     it { is_expected.to eq Unparser.parse(expected_body) }
   end

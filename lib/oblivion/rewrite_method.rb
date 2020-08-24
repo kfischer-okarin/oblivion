@@ -9,8 +9,16 @@ module Oblivion
 
     def on_def(node)
       result = node
-      result = result.renamed(@renamer) if @renamer.was_renamed? result.name
-      super(result)
+      if @renamer.was_renamed? result.name
+        result = result.renamed(@renamer)
+                       .with_args(process(node.args))
+      end
+      result.with_body process(node.body)
+    end
+
+    def on_arg(node)
+      @renamer.rename :"lv_#{node.name}"
+      node.renamed @renamer
     end
 
     def on_send(node)
@@ -30,6 +38,13 @@ module Oblivion
     def on_ivasgn(node)
       result = super(node)
       return result unless @renamer.was_renamed?(node.name)
+
+      result.renamed @renamer
+    end
+
+    def on_lvar(node)
+      result = super(node)
+      return result unless @renamer.was_renamed?(:"lv_#{node.name}")
 
       result.renamed @renamer
     end

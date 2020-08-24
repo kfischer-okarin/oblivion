@@ -211,7 +211,7 @@ RSpec.describe Oblivion::Uglifier do
 
         def other_public_method
           some_array[2] = r_method
-          some_array.each do |el|
+          some_array.each do |r_lv_el|
             r_method
           end
           result = (result | r_method)
@@ -282,6 +282,30 @@ RSpec.describe Oblivion::Uglifier do
         private
 
         attr_reader :r_ivar
+      end
+    RUBY
+  end
+
+  describe 'Method bodies: method arguments of private methods will be renamed' do
+    let(:source) {
+      <<~RUBY
+        class SomeClass
+          private
+
+          def private_method(value1, value2)
+            value1 + value2
+          end
+        end
+      RUBY
+    }
+
+    include_examples 'it will produce equivalent of', <<~RUBY
+      class SomeClass
+        private
+
+        def r_private_method(r_lv_value1, r_lv_value2)
+          r_lv_value1 + r_lv_value2
+        end
       end
     RUBY
   end

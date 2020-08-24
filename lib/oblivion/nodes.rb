@@ -120,5 +120,15 @@ module Oblivion
 
       renameable
     end
+
+    class Arg < Base
+      children :name
+
+      def renamed(renamer)
+        with_name renamer.new_name_of(:"lv_#{name}")
+      end
+    end
+
+    class Lvar < Arg; end
   end
 end

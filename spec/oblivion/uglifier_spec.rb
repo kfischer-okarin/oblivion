@@ -216,17 +216,17 @@ RSpec.describe Oblivion::Uglifier do
         def public_method
           r_method_1
           self.r_method_1
-          r_lv_local_var_2 = r_method_1
+          r_local_var_2 = r_method_1
           @ivar = r_method_1
           r_method_1.other_method
         end
 
         def other_public_method
           some_array[2] = r_method_1
-          some_array.each do |r_lv_el_3|
+          some_array.each do |r_el_3|
             r_method_1
           end
-          r_lv_result_4 = (r_lv_result_4 | r_method_1)
+          r_result_4 = (r_result_4 | r_method_1)
         end
 
         private
@@ -315,8 +315,8 @@ RSpec.describe Oblivion::Uglifier do
       class SomeClass
         private
 
-        def r_private_method_1(r_lv_value1_2, r_lv_value2_3)
-          r_lv_value1_2 + r_lv_value2_3
+        def r_private_method_1(r_value1_2, r_value2_3)
+          r_value1_2 + r_value2_3
         end
       end
     RUBY
@@ -341,8 +341,8 @@ RSpec.describe Oblivion::Uglifier do
         private
 
         def r_private_method_1
-          r_lv_my_local_var_2 = 4
-          r_lv_my_local_var_2 + r_lv_my_local_var_2
+          r_my_local_var_2 = 4
+          r_my_local_var_2 + r_my_local_var_2
         end
       end
     RUBY
@@ -370,13 +370,13 @@ RSpec.describe Oblivion::Uglifier do
       class SomeClass
         private
 
-        def r_private_method_1(r_lv_value_3)
-          r_lv_value_3 + 2
+        def r_private_method_1(r_value_3)
+          r_value_3 + 2
         end
 
-        def r_other_private_method_2(r_lv_other_arg_4)
-          r_lv_value_5 = 5
-          r_lv_other_arg_4 + r_lv_value_5
+        def r_other_private_method_2(r_other_arg_4)
+          r_value_5 = 5
+          r_other_arg_4 + r_value_5
         end
       end
     RUBY

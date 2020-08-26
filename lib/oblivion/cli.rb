@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'thor'
+require_relative 'cli/single_file_input'
 require_relative '../oblivion'
 
 module Oblivion
@@ -11,9 +12,7 @@ module Oblivion
 
     desc 'ruby', 'Uglify a ruby file'
     def ruby(filename)
-      File.open(filename) do |f|
-        process_and_output_result(f.read)
-      end
+      process_and_output_result SingleFileInput.new(filename).data
     end
 
     private

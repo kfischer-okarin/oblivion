@@ -9,6 +9,7 @@ require_relative 'oblivion/method_finder'
 require_relative 'oblivion/rewrite_method'
 require_relative 'oblivion/uglifier'
 require_relative 'oblivion/class_uglifier'
+require_relative 'oblivion/cli'
 
 module Oblivion
   module_function

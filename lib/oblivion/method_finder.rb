@@ -5,7 +5,7 @@ require 'set'
 module Oblivion
   class MethodFinder < BaseProcessor
     def self.methods_of_class(class_node, renamer)
-      new(renamer).process_all(class_node)
+      class_node.with_processed_children new(renamer)
     end
 
     def on_def(node)

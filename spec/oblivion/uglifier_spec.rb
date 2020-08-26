@@ -182,6 +182,31 @@ RSpec.describe Oblivion::Uglifier do
         end
       RUBY
     end
+
+    describe 'public Struct methods after private methods will not change' do
+      let(:source) {
+        <<~RUBY
+          class SomeClass
+            private
+            def private; end
+
+            InternalStructure = Struct.new(:attr) do
+              def some_method; end
+            end
+          end
+        RUBY
+      }
+
+      include_examples 'it will produce equivalent of', <<~RUBY
+        class SomeClass
+          private
+          def r_private_1; end
+          InternalStructure = Struct.new(:attr) do
+            def some_method; end
+          end
+        end
+      RUBY
+    end
   end
 
   describe 'Method bodies: with renamed private methods' do

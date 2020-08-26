@@ -68,7 +68,8 @@ module Oblivion
       end
 
       def with_processed_children(processor)
-        updated(nil, processor.process_all(children))
+        processed = children.map { |child| child.is_a?(AST::Node) ? processor.process(child) : child }
+        updated(nil, processed)
       end
     end
 

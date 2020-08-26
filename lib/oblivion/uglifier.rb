@@ -13,6 +13,7 @@ module Oblivion
     end
 
     alias on_sclass on_class
+    alias on_casgn on_class
 
     protected
 

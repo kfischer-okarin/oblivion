@@ -11,6 +11,8 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/kfischer-okarin/oblivion'
   spec.license       = 'MIT'
 
+  spec.executables << 'oblivion'
+
   spec.required_ruby_version = '>= 2.4.0'
 
   spec.add_dependency             'parser',                '~> 2.7'

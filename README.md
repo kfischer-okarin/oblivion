@@ -1,6 +1,8 @@
 # Oblivion
 
-[![ci](https://circleci.com/gh/kfischer-okarin/oblivion.svg?style=svg)](https://app.circleci.com/pipelines/github/kfischer-okarin/oblivion?branch=master) [![codecov](https://codecov.io/gh/kfischer-okarin/oblivion/branch/master/graph/badge.svg)](https://codecov.io/gh/kfischer-okarin/oblivion)
+[![Gem Version](https://badge.fury.io/rb/oblivion.svg)](https://badge.fury.io/rb/oblivion)
+[![ci](https://circleci.com/gh/kfischer-okarin/oblivion.svg?style=svg)](https://app.circleci.com/pipelines/github/kfischer-okarin/oblivion?branch=master)
+[![codecov](https://codecov.io/gh/kfischer-okarin/oblivion/branch/master/graph/badge.svg)](https://codecov.io/gh/kfischer-okarin/oblivion)
 
 
 Oblivion minimizes and obfuscates Ruby source code by:

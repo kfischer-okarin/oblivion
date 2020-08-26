@@ -17,6 +17,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency             'parser',                '~> 2.7'
   spec.add_dependency             'strings-case',          '~> 0.3.0'
+  spec.add_dependency             'thor',                  '~> 1.0'
   spec.add_dependency             'unparser',              '~> 0.4.7'
 
   spec.add_development_dependency 'codecov',               '~> 0.2.6'

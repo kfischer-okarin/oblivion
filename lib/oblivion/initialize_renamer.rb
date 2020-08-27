@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Oblivion
+  # Scans the class for renameable methods and generates a renamer with new names for all of them
   class InitializeRenamer < Uglifier
     def self.process(class_node, renamer_class)
       new(renamer_class).tap { |processor|

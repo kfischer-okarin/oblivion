@@ -10,7 +10,6 @@ module Oblivion
 
     def initialize
       @new_names = {}
-      @local_new_names = {}
       @generated_names = Set.new
     end
 
@@ -20,32 +19,22 @@ module Oblivion
       }
     end
 
-    def was_renamed?(name, local: false)
-      names(local).key? name
+    def was_renamed?(name)
+      @new_names.key? name
     end
 
-    def rename(name, local: false)
+    def rename(name)
       new_name = nil
       loop do
         new_name = generate_new_name(name)
         break unless @generated_names.include? new_name
       end
-      names(local)[name] = new_name
+      @new_names[name] = new_name
       @generated_names << new_name
     end
 
     def new_name_of(original_name)
-      @local_new_names[original_name] || @new_names[original_name]
-    end
-
-    def clear_local
-      @local_new_names.clear
-    end
-
-    private
-
-    def names(local)
-      local ? @local_new_names : @new_names
+      @new_names[original_name]
     end
   end
 

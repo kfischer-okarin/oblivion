@@ -3,7 +3,7 @@
 module Oblivion
   class Uglifier < BaseProcessor
     def self.process(ast, renamer_class = nil)
-      new(renamer_class).process(ast)
+      ClassUglifier.process(ast,  renamer_class)
     end
 
     def on_class(node)

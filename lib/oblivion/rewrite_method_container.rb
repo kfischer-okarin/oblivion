@@ -8,11 +8,6 @@ module Oblivion
       node.updated(nil, rewriter.process_all(node))
     end
 
-    def initialize(renamer)
-      super()
-      @renamer = renamer
-    end
-
     def on_class(node)
       RewriteMethodContainer.process(node, @renamer.class)
     end
@@ -32,6 +27,13 @@ module Oblivion
 
         arg.renamed @renamer
       })
+    end
+
+    private
+
+    def initialize(renamer)
+      super()
+      @renamer = renamer
     end
   end
 end

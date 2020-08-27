@@ -13,6 +13,13 @@ module Oblivion
       @renamer = renamer
     end
 
+    def on_class(node)
+      ClassUglifier.process(node, renamer_class)
+    end
+
+    alias on_sclass on_class
+    alias on_casgn on_class
+
     def on_def(node)
       RewriteMethod.new(@renamer).process(node)
     end

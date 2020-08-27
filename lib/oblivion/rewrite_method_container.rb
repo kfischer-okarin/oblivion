@@ -21,16 +21,22 @@ module Oblivion
     end
 
     def on_send(node)
-      return unless %i[attr_reader attr_writer attr_accessor].include? node.method_name
-
-      node.with_args(node.args.map { |arg|
-        next arg unless @renamer.was_renamed? arg.name
-
-        arg.renamed @renamer
-      })
+      case node.method_name
+      when :attr_reader, :attr_writer, :attr_accessor
+        on_attribute_accessor node
+      end
     end
 
     private
+
+    def on_attribute_accessor(node)
+      new_attribute_symbols = node.args.map { |attribute_symbol|
+        next attribute_symbol unless @renamer.was_renamed? attribute_symbol.name
+
+        attribute_symbol.renamed @renamer
+      }
+      node.with_args new_attribute_symbols
+    end
 
     def initialize(renamer)
       super()

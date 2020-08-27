@@ -6,9 +6,12 @@ module Oblivion
   class Renamer
     LETTERS = ('a'..'z').to_a.freeze
 
+    attr_reader :generated_names
+
     def initialize
       @new_names = {}
       @local_new_names = {}
+      @generated_names = Set.new
     end
 
     def was_renamed?(name, local: false)
@@ -16,7 +19,13 @@ module Oblivion
     end
 
     def rename(name, local: false)
-      names(local)[name] = generate_new_name(name)
+      new_name = nil
+      loop do
+        new_name = generate_new_name(name)
+        break unless @generated_names.include? new_name
+      end
+      names(local)[name] = new_name
+      @generated_names << new_name
     end
 
     def new_name_of(original_name)
@@ -36,22 +45,10 @@ module Oblivion
 
   class Renamer
     class Random < Renamer
-      def initialize
-        super
-        @used_names = Set.new
-      end
-
-      def rename(name, local: false)
-        @used_names << super
-      end
-
       private
 
       def generate_new_name(_original_name)
-        loop do
-          new_name = LETTERS.sample + SecureRandom.alphanumeric(10)
-          return new_name unless @used_names.include? new_name
-        end
+        LETTERS.sample + SecureRandom.alphanumeric(10)
       end
     end
   end

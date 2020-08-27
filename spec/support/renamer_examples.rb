@@ -30,19 +30,34 @@ RSpec.shared_examples 'Renamer' do
       end
     end
 
+    def generate_100_names
+      100.times do
+        renamer.rename(old_name)
+      end
+    end
+
+    describe '#generated_names' do
+      subject { renamer.generated_names }
+
+      it { is_expected.to be_a Set }
+    end
+
     describe '#rename' do
-      def rename(name)
-        renamer.rename(name)
+      it 'creates a new name' do
+        generate_100_names
+
+        expect(renamer.generated_names).not_to include old_name
       end
 
-      include_examples 'rename common'
+      it 'creates a different name each time' do
+        generate_100_names
+
+        # Because it's a set same names will not increase collection size
+        expect(renamer.generated_names.size).to eq 100
+      end
 
       it 'marks the name as renamed globally' do
         expect { renamer.rename(old_name) }.to(change { renamer.was_renamed?(old_name) }.from(false).to(true))
-      end
-
-      it 'does not mark the name as renamed locally' do
-        expect { renamer.rename(old_name) }.not_to(change { renamer.was_renamed?(old_name, local: true) })
       end
     end
 

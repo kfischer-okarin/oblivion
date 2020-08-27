@@ -16,7 +16,7 @@ RSpec.describe Oblivion do
 
     it 'parses the source uglifies it and produces resulting source code' do
       expect(Unparser).to receive(:parse).with(source).and_return :parsed_ast
-      expect(Oblivion::Uglifier).to receive(:process).with(:parsed_ast).and_return :uglified_ast
+      expect(Oblivion::RewriteMethodContainer).to receive(:process).with(:parsed_ast).and_return :uglified_ast
       expect(Unparser).to receive(:unparse).with(:uglified_ast).and_return 'uglified_source'
       expect(result).to eq 'uglified_source'
     end

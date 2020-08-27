@@ -2,7 +2,7 @@
 
 require_relative '../spec_helper'
 
-RSpec.describe Oblivion::Uglifier do
+RSpec.describe Oblivion::RewriteMethodContainer do
   subject(:result) { described_class.process(Unparser.parse(source), TestRenamer) }
 
   class TestRenamer < Oblivion::Renamer

@@ -5,7 +5,6 @@ require 'unparser'
 require_relative 'oblivion/renamer'
 require_relative 'oblivion/nodes'
 require_relative 'oblivion/base_processor'
-require_relative 'oblivion/uglifier'
 require_relative 'oblivion/initialize_renamer'
 require_relative 'oblivion/rewrite_method'
 require_relative 'oblivion/rewrite_method_container'
@@ -16,7 +15,7 @@ module Oblivion
 
   def uglify(source_code)
     ast = Unparser.parse(source_code)
-    uglified_ast = Uglifier.process(ast)
+    uglified_ast = RewriteMethodContainer.process(ast)
     Unparser.unparse(uglified_ast).gsub(/\n\s*/m, ';')
   end
 end

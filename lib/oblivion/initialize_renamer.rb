@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
-require 'set'
-
 module Oblivion
-  class MethodFinder < BaseProcessor
-    def self.methods_of_class(class_node, renamer)
-      class_node.with_processed_children new(renamer)
+  class InitializeRenamer < Uglifier
+    def self.process(class_node, renamer_class)
+      new(renamer_class).tap { |processor|
+        processor.process_all class_node
+      }.renamer
     end
+
+    attr_reader :renamer
 
     def on_def(node)
       add node.name
@@ -27,10 +29,10 @@ module Oblivion
 
     private
 
-    def initialize(renamer)
-      super()
+    def initialize(renamer_class)
+      super(renamer_class)
       @access_modifier = :public
-      @renamer = renamer
+      @renamer = renamer_class.new
     end
 
     def add(method_name)

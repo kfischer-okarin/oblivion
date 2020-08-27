@@ -7,8 +7,7 @@ module Oblivion
     end
 
     def on_class(node)
-      renamer = renamer_class.new
-      MethodFinder.methods_of_class(node, renamer)
+      renamer = InitializeRenamer.process(node, renamer_class)
       node.with_processed_children ClassUglifier.new(renamer)
     end
 

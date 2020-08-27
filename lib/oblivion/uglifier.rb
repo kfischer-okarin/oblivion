@@ -7,9 +7,7 @@ module Oblivion
     end
 
     def on_class(node)
-      renamer = InitializeRenamer.process(node, renamer_class)
-      uglifier = ClassUglifier.new(renamer)
-      node.updated(nil, uglifier.process_all(node))
+      ClassUglifier.process(node, renamer_class)
     end
 
     alias on_sclass on_class

@@ -2,7 +2,7 @@
 
 module Oblivion
   # Scans the class for renameable methods and generates a renamer with new names for all of them
-  class InitializeRenamer < Uglifier
+  class InitializeRenamer < BaseProcessor
     def self.process(class_node, renamer_class)
       new(renamer_class).tap { |processor|
         processor.process_all class_node
@@ -36,7 +36,7 @@ module Oblivion
     private
 
     def initialize(renamer_class)
-      super(renamer_class)
+      super()
       @access_modifier = :public
       @renamer = renamer_class.new
     end

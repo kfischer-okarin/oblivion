@@ -3,6 +3,7 @@
 require 'securerandom'
 
 module Oblivion
+  # Generates new names and keeps track of them
   class Renamer
     LETTERS = ('a'..'z').to_a.freeze
 
@@ -13,6 +14,7 @@ module Oblivion
       @generated_names = Set.new
     end
 
+    # Creates derived renamer for local variables/arguments which will not generate already generated names again
     def create_local_renamer
       self.class.new.tap { |local_renamer|
         local_renamer.generated_names.merge(generated_names)
@@ -39,6 +41,7 @@ module Oblivion
   end
 
   class Renamer
+    # Generates a random 11 character name
     class Random < Renamer
       private
 

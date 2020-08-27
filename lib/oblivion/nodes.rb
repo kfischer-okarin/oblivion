@@ -3,6 +3,7 @@
 require 'strings-case'
 
 module Oblivion
+  # Helper methods and classes for easier interface to AST nodes
   module Nodes
     module_function
 

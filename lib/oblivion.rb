@@ -10,6 +10,7 @@ require_relative 'oblivion/rewrite_method'
 require_relative 'oblivion/rewrite_method_container'
 require_relative 'oblivion/cli'
 
+# :reek:IrresponsibleModule
 module Oblivion
   module_function
 

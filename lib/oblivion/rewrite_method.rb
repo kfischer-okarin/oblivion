@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 module Oblivion
+  # * Applies new method name if necessary
+  # * Renames local variables
+  # * Renames instance variables if a private accessor exists
+  # * Renames argument names of private methods
   class RewriteMethod < BaseProcessor
     def initialize(renamer)
       super()

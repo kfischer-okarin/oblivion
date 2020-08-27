@@ -6,6 +6,7 @@ require_relative 'cli/dragonruby_project_input'
 require_relative '../oblivion'
 
 module Oblivion
+  # Defines all CLI commands
   class CLI < Thor
     def self.exit_on_failure?
       true

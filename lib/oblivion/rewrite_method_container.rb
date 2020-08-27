@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Oblivion
+  # Renaming context for one class/struct/class method block
   class RewriteMethodContainer < BaseProcessor
     def self.process(node, renamer_class = nil)
       renamer = InitializeRenamer.process(node, renamer_class || Renamer::Random)

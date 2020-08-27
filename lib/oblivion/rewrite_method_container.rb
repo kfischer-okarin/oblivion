@@ -3,8 +3,8 @@
 module Oblivion
   # Renaming context for one class/struct/class method block
   class RewriteMethodContainer < BaseProcessor
-    def self.process(node, renamer_class = nil)
-      renamer = InitializeRenamer.process(node, renamer_class || Renamer::Random)
+    def self.process(node, renamer_class)
+      renamer = InitializeRenamer.process(node, renamer_class)
       rewriter = new(renamer)
       node.updated(nil, rewriter.process_all(node))
     end

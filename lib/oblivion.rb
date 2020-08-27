@@ -16,7 +16,7 @@ module Oblivion
 
   def uglify(source_code)
     ast = Unparser.parse(source_code)
-    uglified_ast = RewriteMethodContainer.process(ast)
+    uglified_ast = RewriteMethodContainer.process(ast, Renamer::Random)
     Unparser.unparse(uglified_ast).gsub(/\n\s*/m, ';')
   end
 end

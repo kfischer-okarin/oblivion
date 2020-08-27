@@ -55,7 +55,8 @@ module Oblivion
     end
 
     def on_lvasgn(node)
-      @local_renamer.rename node.name unless @local_renamer.was_renamed? node.name
+      var_name = node.name
+      @local_renamer.rename var_name unless @local_renamer.was_renamed? var_name
       super(node).renamed @local_renamer
     end
   end

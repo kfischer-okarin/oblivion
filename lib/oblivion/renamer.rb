@@ -50,6 +50,7 @@ module Oblivion
     class Random < Renamer
       private
 
+      # :reek:UtilityFunction
       def generate_name_for(_original_name)
         LETTERS.sample + SecureRandom.alphanumeric(10)
       end

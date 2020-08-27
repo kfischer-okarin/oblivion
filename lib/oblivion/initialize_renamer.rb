@@ -16,7 +16,11 @@ module Oblivion
       node
     end
 
-    ignore_nodes :class, :sclass
+    def on_class(_node)
+      # Do nothing
+    end
+
+    alias on_sclass on_class
 
     def on_send(node)
       case node.method_name

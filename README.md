@@ -15,6 +15,8 @@ At the moment two types of inputs are supported:
 * Single Ruby source code files without dependencies
 * [DragonRuby Game Toolkit](https://dragonruby.itch.io/dragonruby-gtk) projects
 
+The compiled source code will be written to standard output.
+
 ## Usage
 
 Install the gem
@@ -32,5 +34,9 @@ oblivion ruby my_million_dollar_algorithm.rb > ready_for_publishing.rb
 ### Uglify a DragonRuby game project
 
 ```
-oblivion dragonruby games/light_souls
+oblivion dragonruby ./games/light_souls > ./games/light_souls/app/compiled.rb
 ```
+
+This will read your game's `app/main.rb` prepend all required files in order before compiling the source code.
+
+In the case of the above example you could then move all your old source code out of the project and replace with a `app/main.rb` containing your compiled output.

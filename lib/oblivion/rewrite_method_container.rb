@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Oblivion
-  class RewriteMethodContainer < Uglifier
+  class RewriteMethodContainer < BaseProcessor
     def self.process(node, renamer_class)
       renamer = InitializeRenamer.process(node, renamer_class || Renamer::Random)
       rewriter = new(renamer)
@@ -9,12 +9,12 @@ module Oblivion
     end
 
     def initialize(renamer)
-      super(renamer.class)
+      super()
       @renamer = renamer
     end
 
     def on_class(node)
-      RewriteMethodContainer.process(node, renamer_class)
+      RewriteMethodContainer.process(node, @renamer.class)
     end
 
     alias on_sclass on_class

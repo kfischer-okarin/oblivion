@@ -3,7 +3,7 @@
 module Oblivion
   class ClassUglifier < Uglifier
     def self.process(node, renamer_class)
-      renamer = InitializeRenamer.process(node, renamer_class)
+      renamer = InitializeRenamer.process(node, renamer_class || Renamer::Random)
       rewriter = new(renamer)
       node.updated(nil, rewriter.process_all(node))
     end

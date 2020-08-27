@@ -14,7 +14,7 @@ RSpec.describe Oblivion::RewriteMethodContainer do
       end
     end
 
-    def generate_new_name(original_name)
+    def generate_name_for(original_name)
       self.class.generated_count += 1
       :"r_#{original_name}_#{self.class.generated_count}"
     end

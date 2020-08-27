@@ -25,9 +25,9 @@ module Oblivion
       @new_names.key? name
     end
 
-    def rename(name)
-      new_name = generate_unused_name_for(name)
-      @new_names[name] = new_name
+    def rename(original_name)
+      new_name = generate_unused_name_for(original_name)
+      @new_names[original_name] = new_name
       @generated_names << new_name
     end
 
@@ -37,9 +37,9 @@ module Oblivion
 
     private
 
-    def generate_unused_name_for(old_name)
+    def generate_unused_name_for(original_name)
       loop do
-        new_name = generate_new_name(old_name)
+        new_name = generate_name_for(original_name)
         return new_name unless @generated_names.include? new_name
       end
     end
@@ -50,7 +50,7 @@ module Oblivion
     class Random < Renamer
       private
 
-      def generate_new_name(_original_name)
+      def generate_name_for(_original_name)
         LETTERS.sample + SecureRandom.alphanumeric(10)
       end
     end

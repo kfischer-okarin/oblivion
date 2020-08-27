@@ -5,23 +5,28 @@ RSpec.shared_examples 'Renamer' do
     let(:old_name) { 'old_name' }
 
     shared_examples 'rename common' do
+      let(:generated_names) {
+        Set.new(
+          100.times.map {
+            renamer.rename(old_name)
+            renamer.new_name_of(old_name)
+          }
+        )
+      }
+
       it 'creates a new name' do
-        rename(old_name)
-        expect(renamer.new_name_of(old_name)).not_to eq old_name
+        expect(generated_names).not_to include old_name
       end
 
       it 'creates a different name for each method' do
         another_name = 'another_name'
-        rename(old_name)
         rename(another_name)
-        expect(renamer.new_name_of(old_name)).not_to eq renamer.new_name_of(another_name)
+        expect(generated_names).not_to include renamer.new_name_of(another_name)
       end
 
       it 'creates a different name each time' do
-        rename(old_name)
-        first_generated = renamer.new_name_of(old_name)
-        rename(old_name)
-        expect(renamer.new_name_of(old_name)).not_to eq first_generated
+        # Because it's a set same names will not increase collection size
+        expect(generated_names.size).to eq 100
       end
     end
 

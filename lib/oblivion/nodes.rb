@@ -66,11 +66,6 @@ module Oblivion
       def children
         super().map { |node| Nodes.wrap(node) }
       end
-
-      def with_processed_children(processor)
-        processed = children.map { |child| child.is_a?(AST::Node) ? processor.process(child) : child }
-        updated(nil, processed)
-      end
     end
 
     # :reek:IrresponsibleModule

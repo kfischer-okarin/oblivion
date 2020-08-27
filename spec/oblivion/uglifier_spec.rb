@@ -474,4 +474,40 @@ RSpec.describe Oblivion::Uglifier do
       end
     RUBY
   end
+
+  describe 'Method bodies: inner struct renames are independent' do
+    let(:source) {
+      <<~RUBY
+        class SomeClass
+          def method; end
+
+          def other_method
+            method
+          end
+
+          InnerStruct = Struct.new(:value) do
+            private
+
+            def method; end
+          end
+        end
+      RUBY
+    }
+
+    include_examples 'it will produce equivalent of', <<~RUBY
+      class SomeClass
+        def method; end
+
+        def other_method
+          method
+        end
+
+        InnerStruct = Struct.new(:value) do
+          private
+
+          def r_method_1; end
+        end
+      end
+    RUBY
+  end
 end

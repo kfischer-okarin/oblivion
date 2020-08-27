@@ -21,6 +21,7 @@ module Oblivion
     end
 
     alias on_sclass on_class
+    alias on_casgn on_class
 
     def on_send(node)
       case node.method_name

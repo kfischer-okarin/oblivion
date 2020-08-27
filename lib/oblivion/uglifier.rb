@@ -3,11 +3,11 @@
 module Oblivion
   class Uglifier < BaseProcessor
     def self.process(ast, renamer_class = nil)
-      ClassUglifier.process(ast,  renamer_class)
+      RewriteMethodContainer.process(ast,  renamer_class)
     end
 
     def on_class(node)
-      ClassUglifier.process(node, renamer_class)
+      RewriteMethodContainer.process(node, renamer_class)
     end
 
     alias on_sclass on_class

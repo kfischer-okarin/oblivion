@@ -26,17 +26,22 @@ module Oblivion
     end
 
     def rename(name)
-      new_name = nil
-      loop do
-        new_name = generate_new_name(name)
-        break unless @generated_names.include? new_name
-      end
+      new_name = generate_unused_name_for(name)
       @new_names[name] = new_name
       @generated_names << new_name
     end
 
     def new_name_of(original_name)
       @new_names[original_name]
+    end
+
+    private
+
+    def generate_unused_name_for(old_name)
+      loop do
+        new_name = generate_new_name(old_name)
+        return new_name unless @generated_names.include? new_name
+      end
     end
   end
 

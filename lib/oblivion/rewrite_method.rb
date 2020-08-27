@@ -5,7 +5,7 @@ module Oblivion
     def initialize(renamer)
       super()
       @renamer = renamer
-      renamer.clear_local
+      @local_renamer = renamer.create_local_renamer
     end
 
     def on_def(node)
@@ -18,8 +18,8 @@ module Oblivion
     end
 
     def on_arg(node)
-      @renamer.rename node.name, local: true
-      node.renamed @renamer
+      @local_renamer.rename node.name
+      node.renamed @local_renamer
     end
 
     def on_send(node)
@@ -45,14 +45,14 @@ module Oblivion
 
     def on_lvar(node)
       result = super(node)
-      return result unless @renamer.was_renamed? node.name, local: true
+      return result unless @local_renamer.was_renamed? node.name
 
-      result.renamed @renamer
+      result.renamed @local_renamer
     end
 
     def on_lvasgn(node)
-      @renamer.rename node.name, local: true unless @renamer.was_renamed? node.name, local: true
-      super(node).renamed @renamer
+      @local_renamer.rename node.name unless @local_renamer.was_renamed? node.name
+      super(node).renamed @local_renamer
     end
   end
 end

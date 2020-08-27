@@ -444,4 +444,34 @@ RSpec.describe Oblivion::Uglifier do
       end
     RUBY
   end
+
+  describe 'Method bodies: local variables and private methods with same name will be named differently' do
+    let(:source) {
+      <<~RUBY
+        class SomeClass
+          def method
+            calculated_value = calculated_value(arg)
+          end
+
+          private
+
+          def calculated_value(value)
+          end
+        end
+      RUBY
+    }
+
+    include_examples 'it will produce equivalent of', <<~RUBY
+      class SomeClass
+        def method
+          r_calculated_value_2 = r_calculated_value_1(arg)
+        end
+
+        private
+
+        def r_calculated_value_1(r_value_3)
+        end
+      end
+    RUBY
+  end
 end

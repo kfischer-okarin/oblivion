@@ -36,6 +36,28 @@ RSpec.shared_examples 'Renamer' do
       end
     end
 
+    describe '#create_local_renamer' do
+      subject(:created) { renamer.create_local_renamer }
+
+      before do
+        renamer.rename(old_name)
+      end
+
+      it 'knows all generated names so far' do
+        expect(created.generated_names).to eql(renamer.generated_names)
+      end
+
+      it 'contains no renames' do
+        expect(created.was_renamed?(old_name)).to be false
+      end
+
+      it 'is independent from the original renamer' do
+        created.rename(old_name)
+        renamer.rename(old_name)
+        expect(created.generated_names).not_to eql(renamer.generated_names)
+      end
+    end
+
     describe '#generated_names' do
       subject { renamer.generated_names }
 

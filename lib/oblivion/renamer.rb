@@ -14,6 +14,12 @@ module Oblivion
       @generated_names = Set.new
     end
 
+    def create_local_renamer
+      self.class.new.tap { |local_renamer|
+        local_renamer.generated_names.merge(generated_names)
+      }
+    end
+
     def was_renamed?(name, local: false)
       names(local).key? name
     end

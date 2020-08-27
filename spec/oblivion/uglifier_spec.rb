@@ -6,15 +6,22 @@ RSpec.describe Oblivion::Uglifier do
   subject(:result) { described_class.process(Unparser.parse(source), TestRenamer) }
 
   class TestRenamer < Oblivion::Renamer
-    def initialize
-      super
-      @generated_count = 0
+    class << self
+      attr_accessor :generated_count
+
+      def reset
+        @generated_count = 0
+      end
     end
 
     def generate_new_name(original_name)
-      @generated_count += 1
-      :"r_#{original_name}_#{@generated_count}"
+      self.class.generated_count += 1
+      :"r_#{original_name}_#{self.class.generated_count}"
     end
+  end
+
+  before do
+    TestRenamer.reset
   end
 
   describe TestRenamer do

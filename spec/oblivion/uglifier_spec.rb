@@ -408,7 +408,7 @@ RSpec.describe Oblivion::Uglifier do
   end
 
   describe(
-    'Method bodies: references to public arguments will not be changed' \
+    'Method bodies: references to public arguments will not be changed ' \
     'even if there is a private method with the same name'
   ) do
     let(:source) {

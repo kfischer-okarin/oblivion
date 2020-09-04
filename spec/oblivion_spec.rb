@@ -13,7 +13,5 @@ RSpec.describe Oblivion do
         module MyModule; end
       RUBY
     }
-
-    
   end
 end
